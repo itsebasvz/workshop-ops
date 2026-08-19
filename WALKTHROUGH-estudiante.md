@@ -176,9 +176,17 @@ echo "$API"
 
 **Listar:**
 ```bash
-curl -s "$API/places" | head -c 300
+curl -s "$API/places" | python3 -c "import json,sys; d=json.load(sys.stdin); print('count:', d['count']); print('primero:', d['places'][0]['name'])"
 ```
-→ `{"places": [...], "count": 19}` (19 si añadiste uno en el Paso 6)
+→ `count: 18` (o 19 si añadiste un lugar en el Paso 6)
+
+La respuesta completa son ~10 KB, así que conviene resumirla. Si prefieres verla cruda,
+`curl -s "$API/places" | head -c 300` te enseña el primer registro —pero **corta antes de
+`count`**, que va al final del JSON; no te asustes si parece incompleta.
+
+Fíjate en el primer lugar: `signals` son las etiquetas contra las que filtra la app,
+`provenance.type` dice si el dato viene de una fuente oficial o es borrador de la comunidad, y
+`geocodedWith` confirma que las coordenadas no están escritas a mano.
 
 **Buscar:**
 ```bash
