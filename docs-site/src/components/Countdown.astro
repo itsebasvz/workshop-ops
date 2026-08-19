@@ -1,0 +1,70 @@
+---
+import { EVENT } from "../config/event";
+
+/**
+ * Cuenta atrás al inicio del evento.
+ *
+ * El servidor pinta los valores ya calculados, así que la cifra es correcta
+ * desde el primer fotograma y no aparece un parpadeo de ceros. El script solo
+ * la mantiene al día. Sin JavaScript, se ve la cuenta del momento del build,
+ * que para un evento a semanas vista sigue siendo informativa.
+ */
+
+const UNITS = [
+  { key: "d", label: "Días" },
+  { key: "h", label: "Horas" },
+  { key: "m", label: "Minutos" },
+  { key: "s", label: "Segundos" },
+] as const;
+
+const remaining = Math.max(0, new Date(EVENT.startsAt).getTime() - Date.now());
+const seconds = Math.floor(remaining / 1000);
+const initial: Record<string, number> = {
+  d: Math.floor(seconds / 86400),
+  h: Math.floor(seconds / 3600) % 24,
+  m: Math.floor(seconds / 60) % 60,
+  s: seconds % 60,
+};
+---
+
+<ul class="countdown" data-countdown data-target={EVENT.startsAt} aria-label="Cuenta atrás para el evento">
+  {
+    UNITS.map(({ key, label }) => (
+      <li class="countdown__unit">
+        <span class="countdown__n" data-unit={key}>
+          {String(initial[key]).padStart(2, "0")}
+        </span>
+        <span class="countdown__label">{label}</span>
+      </li>
+    ))
+  }
+</ul>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-countdown]");
+  const target = root && Date.parse(root.dataset.target ?? "");
+
+  if (root && target && !Number.isNaN(target)) {
+    const cells = new Map(
+      [...root.querySelectorAll<HTMLElement>("[data-unit]")].map((el) => [el.dataset.unit, el])
+    );
+
+    const tick = () => {
+      const left = Math.max(0, Math.floor((target - Date.now()) / 1000));
+      const values = {
+        d: Math.floor(left / 86400),
+        h: Math.floor(left / 3600) % 24,
+        m: Math.floor(left / 60) % 60,
+        s: left % 60,
+      };
+      for (const [unit, el] of cells) {
+        const next = String(values[unit as keyof typeof values]).padStart(2, "0");
+        if (el.textContent !== next) el.textContent = next;
+      }
+      if (left === 0) clearInterval(timer);
+    };
+
+    const timer = setInterval(tick, 1000);
+    tick();
+  }
+</script>

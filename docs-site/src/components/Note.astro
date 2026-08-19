@@ -1,0 +1,34 @@
+---
+/**
+ * Aviso destacado. El color del filete izquierdo comunica el tipo, pero el
+ * icono y el título lo dicen también con palabras: el color nunca es el único
+ * portador del significado.
+ */
+type Kind = "info" | "warn" | "danger" | "tip" | "community";
+
+interface Props {
+  kind?: Kind;
+  title?: string;
+}
+
+const { kind = "info", title } = Astro.props;
+
+const PRESETS: Record<Kind, { icon: string; fallback: string }> = {
+  info: { icon: "ℹ️", fallback: "Nota" },
+  warn: { icon: "⚠️", fallback: "Atención" },
+  danger: { icon: "🛑", fallback: "Cuidado" },
+  tip: { icon: "💡", fallback: "Truco" },
+  community: { icon: "🌈", fallback: "Desde la comunidad" },
+};
+
+const preset = PRESETS[kind];
+const modifier = kind === "info" ? "" : ` note--${kind}`;
+---
+
+<aside class={`note${modifier}`}>
+  <span class="note__icon" aria-hidden="true">{preset.icon}</span>
+  <div class="note__body">
+    <strong class="note__title">{title ?? preset.fallback}</strong>
+    <slot />
+  </div>
+</aside>

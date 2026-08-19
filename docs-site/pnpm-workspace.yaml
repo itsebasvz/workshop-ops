@@ -1,0 +1,5 @@
+# esbuild y sharp compilan binarios nativos durante la instalación.
+# pnpm 11 los bloquea por defecto; aquí se autorizan de forma explícita.
+allowBuilds:
+  esbuild: true
+  sharp: true

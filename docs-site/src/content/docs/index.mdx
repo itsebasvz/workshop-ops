@@ -1,0 +1,74 @@
+---
+title: SafeSpace Network
+description: Guía del track SafeSpace Network del AWSpectrum Impact Lab.
+template: splash
+editUrl: false
+pagefind: false
+---
+
+import Hero from "../../components/Hero.astro";
+import TrackCard from "../../components/TrackCard.astro";
+import Note from "../../components/Note.astro";
+import { activeTracks } from "../../config/tracks";
+import { EVENT, ROLES } from "../../config/event";
+
+<Hero />
+
+<section class="section">
+  <h2 class="section__title">Elige tu track</h2>
+  <p class="section__lead">
+    Cualquier persona puede elegir cualquiera de los tracks. Ambos se construyen
+    con los mismos servicios, así que lo que aprendas sirve para los dos.
+  </p>
+
+  <div class="grid grid--2">
+    {activeTracks().map((track) => <TrackCard track={track} />)}
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section__title">Cómo funciona</h2>
+  <p class="section__lead">
+    Dentro de tu track te integras a un equipo pequeño. Es una simulación de cómo
+    trabaja un equipo profesional de verdad —ramas, pull requests, code review,
+    deploy— acompañada todo el tiempo por mentores.
+  </p>
+
+  <div class="grid grid--3">
+    {ROLES.map((role) => (
+      <div class="role">
+        <span class="role__name">{role.label}</span>
+        <span class="role__hint">{role.hint}</span>
+      </div>
+    ))}
+  </div>
+
+  <Note kind="tip" title="El entorno ya está listo">
+    El repositorio, la arquitectura base y las tareas están preparados de
+    antemano. Tu tiempo se va en construir, no en configurar.
+  </Note>
+</section>
+
+<section class="section">
+  <h2 class="section__title">Qué te llevas</h2>
+  <p class="section__lead">
+    Todo lo de esta lista es tuyo al terminar y lo puedes enseñar en una entrevista.
+  </p>
+
+  <ul class="deliverables">
+    {EVENT.deliverables.map((item) => <li>{item}</li>)}
+  </ul>
+</section>
+
+<section class="section">
+  <h2 class="section__title">Qué necesitas traer</h2>
+
+  <ul class="deliverables">
+    {EVENT.bring.map((item) => <li>{item}</li>)}
+  </ul>
+
+  <Note kind="community" title="No necesitas ser experta">
+    Necesitas saber programar algo y querer aprender el resto en el proceso.
+    Los mentores están ahí precisamente para eso.
+  </Note>
+</section>

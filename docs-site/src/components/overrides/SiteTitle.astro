@@ -1,0 +1,17 @@
+---
+/**
+ * Marca de la cabecera.
+ *
+ * El logo es la nube de AWSpectrum; el nombre va como texto real y no como
+ * imagen, para que se pueda seleccionar, buscar y leer con lector de pantalla.
+ */
+const href = "/";
+---
+
+<a class="brand" {href} aria-label="SafeSpace Network · inicio">
+  <img class="brand__logo" src="/logo.svg" alt="" width="36" height="24" />
+  <span class="brand__text">
+    <span class="brand__name">SafeSpace Network</span>
+    <span class="brand__sub">AWSpectrum Impact Lab</span>
+  </span>
+</a>

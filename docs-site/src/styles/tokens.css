@@ -1,0 +1,127 @@
+/* =========================================================================
+   Capa 1 · Primitivas
+   -------------------------------------------------------------------------
+   Valores crudos. No se usan directamente en los componentes: la capa 2
+   (theme.css) los traduce a nombres semánticos. Cambiar un valor aquí cambia
+   el sitio entero; cambiar uno en la capa 2 cambia solo un uso.
+   ========================================================================= */
+
+:root {
+  /* --- Marca: paradas del arcoíris ------------------------------------
+     Verbatim del tailwind.config de awspectrum-latam.vercel.app.
+     No inventar tonos intermedios: si hace falta uno, interpolar. */
+  --c-red: #ef4444;
+  --c-orange: #f97316;
+  --c-green: #22c55e;
+  --c-blue: #2563eb;
+  --c-purple: #7c3aed;
+
+  /* El degradado firma. Se usa para señalar estructura, nunca como relleno. */
+  --pride: linear-gradient(
+    135deg,
+    var(--c-red) 0%,
+    var(--c-orange) 25%,
+    var(--c-green) 50%,
+    var(--c-blue) 75%,
+    var(--c-purple) 100%
+  );
+  --pride-h: linear-gradient(
+    to right,
+    var(--c-red) 0%,
+    var(--c-orange) 25%,
+    var(--c-green) 50%,
+    var(--c-blue) 75%,
+    var(--c-purple) 100%
+  );
+
+  /* --- Acción: el naranja de AWS, y solo él ---------------------------- */
+  --c-action: #ff9900;
+  --c-action-hover: #e08800;
+  /* Versión oscurecida para texto sobre fondo claro: #ff9900 sobre blanco
+     da 2.1:1 y no pasa AA. Este tono sí. */
+  --c-action-ink: #8a5200;
+
+  /* --- Neutros (escala slate de Tailwind, la que usa AWS Spectrum) ----- */
+  --n-0: #ffffff;
+  --n-50: #f8fafc;
+  --n-100: #f1f5f9;
+  --n-200: #e2e8f0;
+  --n-300: #cbd5e1;
+  --n-400: #94a3b8;
+  --n-500: #64748b;
+  --n-600: #475569;
+  --n-700: #334155;
+  --n-800: #1e293b;
+  --n-900: #0f172a;
+  --n-950: #111827; /* darkCard de su tema */
+  --n-1000: #090d16; /* darkBg de su tema */
+
+  /* --- Tipografía ------------------------------------------------------
+     Escala fluida: cada paso interpola entre 360px y 1280px de viewport.
+     Evita los saltos bruscos de una escala por breakpoints. */
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, monospace;
+
+  --t-xs: 0.75rem;
+  --t-sm: 0.8125rem;
+  --t-base: clamp(0.9375rem, 0.9rem + 0.16vw, 1rem);
+  --t-md: clamp(1rem, 0.95rem + 0.22vw, 1.125rem);
+  --t-lg: clamp(1.125rem, 1.03rem + 0.42vw, 1.375rem);
+  --t-xl: clamp(1.375rem, 1.2rem + 0.78vw, 1.875rem);
+  --t-2xl: clamp(1.75rem, 1.42rem + 1.46vw, 2.625rem);
+  --t-3xl: clamp(2.25rem, 1.62rem + 2.8vw, 4rem);
+
+  /* Tracking negativo en los tamaños grandes: es el detalle que separa
+     un titular hecho a mano de uno por defecto. */
+  --track-tight: -0.03em;
+  --track-snug: -0.015em;
+  --track-wide: 0.08em;
+
+  --lh-tight: 1.08;
+  --lh-snug: 1.25;
+  --lh-body: 1.65;
+
+  /* --- Espaciado: ritmo de 4px ----------------------------------------- */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.25rem;
+  --s-6: 1.5rem;
+  --s-8: 2rem;
+  --s-10: 2.5rem;
+  --s-12: 3rem;
+  --s-16: 4rem;
+  --s-20: 5rem;
+  --s-24: 6rem;
+
+  /* --- Radios: cuatro pasos, asignados por rol del elemento -------------
+     6px  controles pequeños (chips, badges)
+     10px controles (botones, campos)
+     14px tarjetas y bloques de código
+     20px superficies grandes (hero, diálogos) */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-full: 999px;
+
+  /* --- Elevación -------------------------------------------------------
+     Neutra por defecto. La sombra de color (--e-spectrum) es énfasis y se
+     reserva a un solo elemento protagonista por página. */
+  --e-1: 0 1px 2px rgb(0 0 0 / 0.06), 0 1px 1px rgb(0 0 0 / 0.04);
+  --e-2: 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --e-3: 0 12px 28px -8px rgb(0 0 0 / 0.14), 0 4px 10px -4px rgb(0 0 0 / 0.07);
+  --e-spectrum: 0 18px 40px -22px rgb(249 115 22 / 0.5),
+    0 18px 40px -22px rgb(34 197 94 / 0.4), 0 18px 40px -22px rgb(37 99 235 / 0.45);
+
+  /* --- Movimiento ------------------------------------------------------ */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 130ms;
+  --dur: 190ms;
+
+  /* --- Medidas --------------------------------------------------------- */
+  --measure: 68ch;
+  --rail: 3px; /* grosor del riel arcoíris */
+}

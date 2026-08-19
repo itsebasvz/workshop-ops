@@ -1,0 +1,31 @@
+---
+title: Requisitos
+description: Lo que necesitas tener listo antes de que empiece el taller.
+sidebar:
+  order: 2
+---
+
+import Terminal from "../../../components/Terminal.astro";
+import Note from "../../../components/Note.astro";
+
+Trae tu laptop y una cuenta de GitHub. Todo lo demás se instala en el momento.
+
+## Comprueba tu entorno
+
+<Terminal
+  title="AWS CloudShell"
+  cmd={["git --version", "aws --version"]}
+  out={`git version 2.47.1
+aws-cli/2.31.10 Python/3.13.7 Linux/6.1 exe/x86_64.al2023`}
+/>
+
+<Note kind="warn" title="Usa la región correcta">
+  Todo el taller ocurre en <code>us-east-1</code> (Norte de Virginia).
+  Comprueba la esquina superior derecha de la consola antes de empezar.
+</Note>
+
+## Clona el repositorio
+
+<Terminal
+  cmd="git clone https://github.com/itsebasvz/safe-spot-aws-spectrum.git"
+/>

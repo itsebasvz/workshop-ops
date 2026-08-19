@@ -1,0 +1,367 @@
+/* =========================================================================
+   Capa 2 · Semántica + puente con Starlight
+   -------------------------------------------------------------------------
+   Traduce las primitivas a nombres de uso ("superficie elevada", "texto
+   secundario") y las conecta con las custom properties que Starlight ya
+   consume, para no pelear con el framework.
+
+   Starlight alterna temas con el atributo data-theme en <html>.
+   ========================================================================= */
+
+/* --- Oscuro (por defecto) ------------------------------------------------ */
+:root,
+:root[data-theme="dark"] {
+  --bg: var(--n-1000);
+  --bg-subtle: #0c1120;
+  --surface: var(--n-950);
+  --surface-raised: var(--n-800);
+  --surface-sunken: #070a11;
+
+  --line: rgb(148 163 184 / 0.16);
+  --line-strong: rgb(148 163 184 / 0.3);
+
+  --ink: var(--n-0);
+  --ink-body: var(--n-100);
+  --ink-muted: var(--n-300);
+  --ink-dim: var(--n-400);
+
+  --action: var(--c-action);
+  --action-hover: var(--c-action-hover);
+  --action-ink: #0b0f18; /* texto sobre el naranja */
+  --action-quiet: rgb(255 153 0 / 0.12);
+
+  --track-blue: var(--c-blue);
+  --track-purple: var(--c-purple);
+
+  --glass: rgb(9 13 22 / 0.72);
+  --code-bg: #0b101c;
+
+  color-scheme: dark;
+}
+
+/* --- Claro ---------------------------------------------------------------
+   No es el oscuro invertido: los grises se recalibran para que el contraste
+   siga siendo cómodo con luz de sala y proyector. */
+:root[data-theme="light"] {
+  --bg: var(--n-0);
+  --bg-subtle: var(--n-50);
+  --surface: var(--n-50);
+  --surface-raised: var(--n-0);
+  --surface-sunken: var(--n-100);
+
+  --line: rgb(15 23 42 / 0.1);
+  --line-strong: rgb(15 23 42 / 0.18);
+
+  --ink: var(--n-900);
+  --ink-body: var(--n-700);
+  --ink-muted: var(--n-600);
+  --ink-dim: var(--n-500);
+
+  /* Sobre fondo claro el naranja de AWS no alcanza AA como texto,
+     así que el texto usa la versión entintada y el relleno el naranja puro. */
+  --action: var(--c-action-ink);
+  --action-hover: #6d4100;
+  --action-ink: var(--n-0);
+  --action-quiet: rgb(255 153 0 / 0.16);
+
+  --track-blue: #1d4ed8;
+  --track-purple: #6d28d9;
+
+  --glass: rgb(255 255 255 / 0.78);
+  --code-bg: var(--n-900);
+
+  color-scheme: light;
+}
+
+/* =========================================================================
+   Puente con Starlight
+   ========================================================================= */
+:root,
+:root[data-theme="dark"] {
+  --sl-color-accent: var(--c-action);
+  --sl-color-accent-low: rgb(255 153 0 / 0.16);
+  --sl-color-accent-high: #ffd08a;
+  --sl-color-white: var(--ink);
+  --sl-color-gray-1: var(--ink-body);
+  --sl-color-gray-2: var(--ink-muted);
+  --sl-color-gray-3: var(--ink-dim);
+  --sl-color-gray-4: var(--n-500);
+  --sl-color-gray-5: var(--surface-raised);
+  --sl-color-gray-6: var(--surface);
+  --sl-color-black: var(--bg);
+  --sl-color-bg: var(--bg);
+  --sl-color-bg-nav: transparent;
+  --sl-color-bg-sidebar: transparent;
+  --sl-color-hairline: var(--line);
+  --sl-color-hairline-light: var(--line);
+  --sl-color-hairline-shade: var(--line);
+  --sl-color-text: var(--ink-body);
+  --sl-color-text-accent: var(--action);
+  --sl-color-bg-inline-code: var(--action-quiet);
+}
+
+:root[data-theme="light"] {
+  --sl-color-accent: var(--c-action-ink);
+  --sl-color-accent-low: rgb(255 153 0 / 0.18);
+  --sl-color-accent-high: #5c3600;
+  --sl-color-white: var(--ink);
+  --sl-color-gray-1: var(--ink-body);
+  --sl-color-gray-2: var(--ink-muted);
+  --sl-color-gray-3: var(--ink-dim);
+  --sl-color-gray-5: var(--surface-sunken);
+  --sl-color-gray-6: var(--surface);
+  --sl-color-bg: var(--bg);
+}
+
+:root {
+  --sl-font: var(--font-body);
+  --sl-font-system: var(--font-body);
+  --sl-font-system-mono: var(--font-mono);
+  --sl-text-h1: var(--t-3xl);
+  --sl-text-h2: var(--t-xl);
+  --sl-text-h3: var(--t-lg);
+  --sl-text-h4: var(--t-md);
+  --sl-content-width: 50rem;
+  --sl-sidebar-width: 17.5rem;
+  --sl-nav-height: 4rem;
+}
+
+/* =========================================================================
+   Base
+   ========================================================================= */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--sl-nav-height) + var(--s-6));
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink-body);
+  font-family: var(--font-body);
+  font-size: var(--t-base);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Textura de rejilla, muy tenue. Da profundidad sin competir con el contenido. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: 0.5;
+  mask-image: radial-gradient(ellipse 100% 60% at 50% 0%, #000 20%, transparent 75%);
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: var(--track-snug);
+  line-height: var(--lh-snug);
+}
+
+h1 {
+  font-weight: 800;
+  letter-spacing: var(--track-tight);
+  line-height: var(--lh-tight);
+}
+
+/* Filete arcoíris bajo los h2: el degradado señalando jerarquía,
+   que es exactamente el papel que le dimos. */
+.sl-markdown-content h2 {
+  padding-bottom: var(--s-3);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+
+.sl-markdown-content h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 3.5rem;
+  height: 2px;
+  background: var(--pride-h);
+  border-radius: var(--r-full);
+}
+
+.sl-markdown-content {
+  --sl-content-pad-x: 0;
+}
+
+.sl-markdown-content p,
+.sl-markdown-content li {
+  max-width: var(--measure);
+}
+
+a {
+  color: var(--action);
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+a:hover {
+  color: var(--action-hover);
+}
+
+/* Foco visible y consistente en todo el sitio. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--c-action);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+::selection {
+  background: rgb(255 153 0 / 0.28);
+  color: var(--ink);
+}
+
+/* Código */
+:not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  padding: 0.15em 0.4em;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+}
+
+.expressive-code,
+.sl-markdown-content pre {
+  border-radius: var(--r-lg);
+}
+
+/* =========================================================================
+   Estructura de Starlight
+   ========================================================================= */
+
+/* Cabecera de cristal con el riel arcoíris encima. */
+.header {
+  background: var(--glass);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  border-bottom: 1px solid var(--line);
+}
+
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--rail);
+  background: var(--pride-h);
+}
+
+/* Barra lateral: el degradado marca la página activa. */
+.sidebar-content a[aria-current="page"] {
+  position: relative;
+  background: var(--action-quiet);
+  color: var(--ink);
+  font-weight: 600;
+  border-radius: var(--r-md);
+}
+
+.sidebar-content a[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  left: -0.5rem;
+  top: 0.35rem;
+  bottom: 0.35rem;
+  width: var(--rail);
+  border-radius: var(--r-full);
+  background: var(--pride);
+}
+
+.sidebar-content a {
+  border-radius: var(--r-md);
+  transition: background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.sidebar-content a:hover {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.sidebar-content summary {
+  border-radius: var(--r-md);
+}
+
+/* Grupos de la barra lateral, en versalitas discretas. */
+.sidebar-content .large {
+  font-family: var(--font-display);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+/* Tabla de contenidos */
+starlight-toc a[aria-current="true"] {
+  color: var(--action);
+  font-weight: 600;
+}
+
+/* Paginación previa/siguiente */
+.pagination-links a {
+  border-radius: var(--r-lg);
+  border-color: var(--line);
+  background: var(--surface);
+  transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+
+.pagination-links a:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+}
+
+/* Tablas */
+.sl-markdown-content table {
+  border-collapse: collapse;
+  font-size: var(--t-sm);
+  width: 100%;
+}
+
+.sl-markdown-content th {
+  font-family: var(--font-display);
+  font-size: var(--t-xs);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  text-align: left;
+  border-bottom: 1px solid var(--line-strong);
+  padding: var(--s-2) var(--s-3);
+}
+
+.sl-markdown-content td {
+  border-bottom: 1px solid var(--line);
+  padding: var(--s-3);
+  vertical-align: top;
+}
+
+/* =========================================================================
+   Movimiento reducido
+   ========================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

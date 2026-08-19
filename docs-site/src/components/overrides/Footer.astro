@@ -1,0 +1,20 @@
+---
+import Default from "@astrojs/starlight/components/Footer.astro";
+import { EVENT } from "../../config/event";
+
+const year = new Date().getFullYear();
+---
+
+<Default><slot /></Default>
+
+<footer class="footer">
+  <div class="footer__pride" aria-hidden="true"></div>
+  <div class="footer__row">
+    <span>
+      Hecho con 🌈 y ☁️ en Latinoamérica · © {year} AWSpectrum LATAM
+    </span>
+    <span>
+      <a href={EVENT.registrationUrl}>{EVENT.name}</a> · {EVENT.dateLabel}
+    </span>
+  </div>
+</footer>
