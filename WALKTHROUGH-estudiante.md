@@ -128,6 +128,11 @@ python3 scripts/seed.py
 
 **Recarga el sitio:** ahora hay 18 pines.
 
+> 🔄 **Si sigues viendo el mapa vacío, fuerza el refresco** (`Ctrl`+`Shift`+`R`, o `Cmd`+`Shift`+`R`
+> en Mac). Abriste el sitio en el Paso 4 con la tabla vacía y el navegador pudo quedarse con esa
+> respuesta. La API ya envía `Cache-Control: no-store` para evitarlo, pero una pestaña abierta
+> desde antes del arreglo puede arrastrar la copia vieja.
+
 **Mira un registro:**
 
 ```bash
