@@ -1,0 +1,23 @@
+---
+/**
+ * Franja de cifras.
+ *
+ * Cuatro datos concretos justo debajo de la portada. Cada uno lleva una nota
+ * que dice de dónde sale: una cifra sin procedencia es decoración.
+ */
+import { STATS } from "../config/event";
+---
+
+<dl class="stats">
+  {
+    STATS.map((stat) => (
+      <div class="stats__item">
+        <dt class="stats__label">
+          {stat.label}
+          <span class="stats__note">{stat.note}</span>
+        </dt>
+        <dd class="stats__value">{stat.value}</dd>
+      </div>
+    ))
+  }
+</dl>

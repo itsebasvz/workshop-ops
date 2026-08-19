@@ -8,7 +8,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "contrast": "node scripts/contrast.js"
   },
   "dependencies": {
     "@astrojs/starlight": "0.41.7",
@@ -16,5 +17,8 @@
     "@fontsource-variable/outfit": "^5.3.0",
     "astro": "7.2.4",
     "sharp": "^0.34.4"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1"
   }
 }

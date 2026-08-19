@@ -1,0 +1,31 @@
+---
+/**
+ * Resolución del tema, antes de pintar.
+ *
+ * Igual que el de Starlight salvo en una cosa: cuando no hay preferencia
+ * guardada, el tema es oscuro, no el del sistema. Es una decisión del proyecto
+ * —la plataforma se ve en una sala con proyector y el oscuro es el que se
+ * diseñó primero—, y quien prefiera claro lo cambia con el interruptor de la
+ * barra, que sí se recuerda.
+ *
+ * Va en línea dentro del `<head>` a propósito: si esto llegara como módulo
+ * diferido, la página se pintaría clara y saltaría a oscura a la vista.
+ */
+---
+
+<script is:inline>
+  window.StarlightThemeProvider = (() => {
+    let stored = null;
+    try {
+      stored = localStorage.getItem("starlight-theme");
+    } catch {
+      // Almacenamiento bloqueado: se usa el tema por defecto.
+    }
+    document.documentElement.dataset.theme = stored === "light" ? "light" : "dark";
+
+    // Starlight llama a esto desde su propio selector de tema. Aquí el selector
+    // está reemplazado por un botón que se sincroniza solo, así que no hay nada
+    // que actualizar; se deja definido para no romper el contrato.
+    return { updatePickers() {} };
+  })();
+</script>

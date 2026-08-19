@@ -19,6 +19,12 @@ export interface Track {
   accent: "blue" | "purple";
   /** Servicios de AWS que se usan, para la tarjeta. */
   services: string[];
+  /**
+   * La arquitectura en orden de recorrido de una petición. Se dibuja como flujo
+   * en la portada, así que el orden importa: es el camino que sigue el dato.
+   * `via` marca un servicio al que ese nodo llama de lado, fuera de la cadena.
+   */
+  stack: Array<{ service: string; role: string; what: string; via?: string }>;
   enabled: boolean;
 }
 
@@ -33,6 +39,17 @@ export const TRACKS: Track[] = [
       "y legal, refugios y centros comunitarios.",
     accent: "blue",
     services: ["S3", "API Gateway", "Lambda", "DynamoDB"],
+    stack: [
+      { service: "S3", role: "Frontend", what: "Sirve el mapa y la interfaz" },
+      { service: "API Gateway", role: "Cloud", what: "La puerta de entrada HTTP" },
+      {
+        service: "Lambda",
+        role: "Backend",
+        what: "La lógica, sin un servidor que mantener",
+        via: "Bedrock",
+      },
+      { service: "DynamoDB", role: "Base de datos", what: "Los lugares seguros" },
+    ],
     enabled: true,
   },
   {
@@ -44,6 +61,12 @@ export const TRACKS: Track[] = [
       "registro de contactos de confianza y propagación de alertas en la red.",
     accent: "purple",
     services: ["S3", "API Gateway", "Lambda", "DynamoDB"],
+    stack: [
+      { service: "S3", role: "Frontend", what: "La interfaz de la red de apoyo" },
+      { service: "API Gateway", role: "Cloud", what: "La puerta de entrada HTTP" },
+      { service: "Lambda", role: "Backend", what: "Alertas y contactos de confianza" },
+      { service: "DynamoDB", role: "Base de datos", what: "La red de cada persona" },
+    ],
     // Pendiente de contenido. Mientras esté en false no se renderiza en ningún sitio.
     enabled: false,
   },

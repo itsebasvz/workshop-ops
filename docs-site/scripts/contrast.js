@@ -3,20 +3,45 @@
  * no los que creemos haber definido. Resuelve el fondo subiendo por el árbol
  * hasta encontrar uno opaco, que es lo que ve el ojo.
  */
-const { chromium } = require("playwright");
+// Se ejecuta contra el servidor de desarrollo:
+//   pnpm dev        (en una terminal)
+//   pnpm contrast   (en otra)
+import { chromium } from "playwright";
 
 const TARGETS = [
-  [".hero__lead", "Entradilla del hero"],
   [".hero__title", "Titular del hero"],
-  [".facts__value", "Dato destacado"],
-  [".facts__note", "Nota secundaria"],
-  [".facts__label", "Etiqueta de dato"],
+  [".hero__lead", "Entradilla del hero"],
+  [".hero__eyebrow", "Distintivo del hero"],
+  [".hero__meta", "Créditos del hero"],
+  [".ticket__kicker", "Antetítulo del billete"],
+  [".ticket__value", "Dato del billete"],
+  [".ticket__note", "Nota del billete"],
+  [".ticket__label", "Etiqueta del billete"],
+  [".countdown__n", "Cifra de cuenta atrás"],
   [".countdown__label", "Etiqueta de cuenta atrás"],
-  [".track-card__summary", "Resumen de track"],
-  [".chip", "Chip de servicio"],
-  [".role__hint", "Descripción de rol"],
+  [".stats__value", "Cifra destacada"],
+  [".stats__label", "Etiqueta de cifra"],
+  [".stats__note", "Procedencia de cifra"],
+  [".section__kicker", "Antetítulo de sección"],
   [".section__lead", "Entradilla de sección"],
+  [".panel__summary", "Resumen del track"],
+  [".panel__aside-title", "Título del diagrama"],
+  [".flow__service", "Servicio en el flujo"],
+  [".flow__what", "Descripción en el flujo"],
+  [".flow__role", "Rol en el flujo"],
+  [".flow__index", "Número del flujo"],
+  [".phase__label", "Nombre de bloque"],
+  [".phase__min", "Minutos del bloque"],
+  [".phase__detail", "Detalle del bloque"],
+  [".chip", "Chip de servicio"],
+  [".role__n", "Número de rol"],
+  [".role__hint", "Descripción de rol"],
+  [".deliverables li", "Entregable"],
+  [".cta__note", "Nota del cierre"],
   [".btn--primary", "Botón primario"],
+  [".btn--ghost", "Botón secundario"],
+  ["button[data-open-modal] > span", "Marcador del buscador"],
+  [".topbar__search kbd kbd", "Tecla del atajo"],
   [".footer", "Pie"],
   [".sidebar-content a", "Enlace de la barra lateral"],
   [".sl-markdown-content p", "Párrafo de documentación"],

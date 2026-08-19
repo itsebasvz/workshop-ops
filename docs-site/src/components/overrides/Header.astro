@@ -1,0 +1,44 @@
+---
+/**
+ * Cabecera.
+ *
+ * Se reemplaza la de Starlight por dos motivos:
+ *
+ * 1. Su rejilla de tres columnas calcula el ancho del buscador a partir del
+ *    ancho de la barra lateral y del contenido, así que el campo queda estrecho
+ *    y descentrado. Aquí el buscador es un elemento con ancho propio y máximo,
+ *    centrado en la barra.
+ * 2. Su marcado envuelve todo en otro `.header`, la misma clase que usa el
+ *    contenedor fijo de `PageFrame`. Eso aplicaba dos veces el fondo de cristal
+ *    y el filete inferior. Este usa `.topbar`, que no colisiona.
+ */
+import config from "virtual:starlight/user-config";
+
+import LanguageSelect from "virtual:starlight/components/LanguageSelect";
+import Search from "virtual:starlight/components/Search";
+import SiteTitle from "virtual:starlight/components/SiteTitle";
+import SocialIcons from "virtual:starlight/components/SocialIcons";
+import ThemeSelect from "virtual:starlight/components/ThemeSelect";
+
+const shouldRenderSearch =
+  config.pagefind ||
+  config.components.Search !== "@astrojs/starlight/components/Search.astro";
+---
+
+<div class="topbar">
+  <div class="topbar__brand">
+    <SiteTitle />
+  </div>
+
+  <div class="topbar__search print:hidden">
+    {shouldRenderSearch && <Search />}
+  </div>
+
+  <div class="topbar__actions sl-hidden md:sl-flex print:hidden">
+    <div class="topbar__social sl-flex">
+      <SocialIcons />
+    </div>
+    <ThemeSelect />
+    <LanguageSelect />
+  </div>
+</div>

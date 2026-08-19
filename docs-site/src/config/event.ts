@@ -15,6 +15,12 @@ export const EVENT = {
   timeZone: "America/Mexico_City",
   /** Texto ya formateado: evitamos depender de Intl en el cliente para algo fijo. */
   dateLabel: "Jueves 27 de agosto, 2026",
+  /* Partes sueltas de la fecha, para el billete de la portada. Se escriben a
+     mano en lugar de trocear `dateLabel` con Intl: es un dato fijo y no
+     merece código. */
+  weekdayLabel: "Jueves",
+  dayNumber: "27",
+  monthLabel: "Ago 2026",
   timeLabel: "16:00 – 20:00 h · CDMX",
   durationLabel: "3 horas de construcción",
   venue: {
@@ -58,3 +64,56 @@ export const ROLES = [
 ] as const;
 
 export type Role = (typeof ROLES)[number];
+
+/**
+ * Cómo se reparten los 180 minutos.
+ *
+ * Los minutos salen de la agenda del Notion, agrupados en cuatro bloques para
+ * que se lean de un vistazo. El desglose fino vive en `RUNBOOK-dry-run.md`.
+ */
+export const PHASES = [
+  {
+    id: "acceso",
+    label: "Acceso y contexto",
+    minutes: 45,
+    detail:
+      "Cuenta de AWS, CloudShell y el porqué del proyecto. Es el bloque más " +
+      "impredecible y por eso va primero.",
+  },
+  {
+    id: "construccion",
+    label: "Construcción",
+    minutes: 80,
+    detail:
+      "Infraestructura con SAM, el mapa, los datos y las funciones Lambda. " +
+      "Aquí cada rol trabaja en su parte y abre su rama.",
+  },
+  {
+    id: "integracion",
+    label: "IA e integración",
+    minutes: 45,
+    detail:
+      "Búsqueda en lenguaje natural con Bedrock, pull requests, code review " +
+      "y todo junto funcionando.",
+  },
+  {
+    id: "pitch",
+    label: "Cierre y pitch",
+    minutes: 10,
+    detail: "Tres minutos por equipo para contar qué construyeron y por qué.",
+  },
+] as const;
+
+/**
+ * Cifras de la portada.
+ *
+ * `registered` es el número de inscripciones en Luma el 19 de agosto de 2026.
+ * Es un dato que envejece: si se muestra desactualizado, actualízalo aquí o
+ * quítalo, pero no lo dejes mintiendo.
+ */
+export const STATS = [
+  { value: "71", label: "personas inscritas", note: "al 19 de agosto" },
+  { value: "180", label: "minutos de taller", note: "de 16:00 a 20:00" },
+  { value: "5", label: "roles por equipo", note: "como en un equipo real" },
+  { value: "1", label: "MVP desplegado", note: "tuyo, al terminar" },
+] as const;

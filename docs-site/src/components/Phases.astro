@@ -1,0 +1,29 @@
+---
+/**
+ * Los 180 minutos, en cuatro bloques.
+ *
+ * Se dibuja como línea de tiempo con las anchuras proporcionales a los minutos
+ * reales: la barra dice, sin leer una cifra, que la mitad del taller es
+ * construir. Debajo de 60rem la línea se vuelve vertical y las proporciones
+ * dejan de aplicarse, porque en columna ya no comunican nada.
+ */
+import { PHASES } from "../config/event";
+
+const total = PHASES.reduce((sum, phase) => sum + phase.minutes, 0);
+---
+
+<ol class="phases" style={`--phase-total: ${total}`}>
+  {
+    PHASES.map((phase, index) => (
+      <li class="phase" style={`--phase-min: ${phase.minutes}`}>
+        <p class="phase__head">
+          <span class="phase__n">{String(index + 1).padStart(2, "0")}</span>
+          <span class="phase__label">{phase.label}</span>
+          <span class="phase__min">{phase.minutes} min</span>
+        </p>
+        <div class="phase__bar" aria-hidden="true" />
+        <p class="phase__detail">{phase.detail}</p>
+      </li>
+    ))
+  }
+</ol>

@@ -1,0 +1,35 @@
+---
+/**
+ * Aparición al hacer scroll.
+ *
+ * Se activa marcando un elemento con `data-reveal`. El estado inicial lo pone
+ * el propio script y no el CSS: si el JavaScript no llega a ejecutarse, el
+ * contenido se queda visible en lugar de invisible para siempre.
+ *
+ * Con `prefers-reduced-motion` el script no hace nada en absoluto.
+ */
+---
+
+<script>
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const targets = [...document.querySelectorAll<HTMLElement>("[data-reveal]")];
+
+  if (!reduced && targets.length > 0 && "IntersectionObserver" in window) {
+    for (const el of targets) el.classList.add("is-hidden");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.remove("is-hidden");
+          observer.unobserve(entry.target);
+        }
+      },
+      // Se dispara un poco antes de que el elemento entre del todo, para que la
+      // transición termine justo cuando queda a la vista.
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.05 }
+    );
+
+    for (const el of targets) observer.observe(el);
+  }
+</script>

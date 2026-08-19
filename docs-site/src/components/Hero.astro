@@ -1,54 +1,51 @@
 ---
+/**
+ * Portada.
+ *
+ * Composición asimétrica: el argumento a la izquierda y el billete a la
+ * derecha. Centrarlo todo es lo que hace que una portada se lea como una
+ * plantilla; darle un eje y un peso distinto a cada lado es lo que la hace
+ * parecer diseñada.
+ */
 import { EVENT } from "../config/event";
-import Countdown from "./Countdown.astro";
+import Ticket from "./Ticket.astro";
 ---
 
 <header class="hero">
-  <p class="hero__eyebrow">
-    <span aria-hidden="true">🌈</span>
-    {EVENT.name}
-  </p>
+  <div class="hero__grid">
+    <div class="hero__copy">
+      <p class="hero__eyebrow">
+        <span class="hero__pulse" aria-hidden="true"></span>
+        Inscripciones abiertas · CDMX
+      </p>
 
-  <h1 class="hero__title">
-    No vienes a ver a alguien programar.<br />
-    <span class="gradient-text">Vienes a construir.</span>
-  </h1>
+      <h1 class="hero__title">
+        No vienes a ver a alguien programar.<br />
+        <span class="gradient-text">Vienes a construir.</span>
+      </h1>
 
-  <p class="hero__lead">
-    Tres horas, un equipo y una plataforma real desplegada sobre AWS. Llegas,
-    te integras a un equipo y sales con un MVP funcionando.
-  </p>
+      <p class="hero__lead">
+        Tres horas, un equipo y una plataforma real desplegada sobre AWS.
+        Llegas, te integras a un equipo y sales con un MVP funcionando —y con
+        el repositorio que lo demuestra.
+      </p>
 
-  <div class="hero__actions">
-    <a class="btn btn--primary" href="/empezar/bienvenida">Empezar el workshop</a>
-    <a class="btn btn--ghost" href={EVENT.registrationUrl}>Página del evento</a>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="/empezar/bienvenida">
+          Empezar el workshop
+          <span class="btn__arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="btn btn--ghost" href={EVENT.registrationUrl}>
+          Página del evento
+        </a>
+      </div>
+
+      <p class="hero__meta">
+        Organiza {EVENT.organizers[0]} con {EVENT.organizers.length - 1} capítulos
+        estudiantiles · Facilitan {EVENT.hosts.join(" y ")}
+      </p>
+    </div>
+
+    <Ticket />
   </div>
-
-  <Countdown />
-
-  <ul class="facts">
-    <li class="facts__item">
-      <span class="facts__label">Cuándo</span>
-      <span class="facts__value">{EVENT.dateLabel}</span>
-      <span class="facts__note">
-        {EVENT.timeLabel}
-      </span>
-    </li>
-    <li class="facts__item">
-      <span class="facts__label">Dónde</span>
-      <span class="facts__value">
-        <a href={EVENT.venue.mapsUrl}>{EVENT.venue.name}</a>
-      </span>
-      <span class="facts__note">
-        {EVENT.venue.address}
-      </span>
-    </li>
-    <li class="facts__item">
-      <span class="facts__label">Formato</span>
-      <span class="facts__value">Presencial, en equipos</span>
-      <span class="facts__note">
-        {EVENT.durationLabel}
-      </span>
-    </li>
-  </ul>
 </header>

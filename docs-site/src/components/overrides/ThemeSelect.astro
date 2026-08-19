@@ -1,0 +1,83 @@
+---
+/**
+ * Interruptor de tema.
+ *
+ * Starlight trae un `<select>` de tres opciones (claro / oscuro / automático).
+ * En una barra estrecha eso ocupa mucho y obliga a abrir un menú para algo que
+ * tiene dos estados útiles. Aquí es un botón: se ve el icono del tema al que
+ * vas a cambiar y un clic basta.
+ *
+ * El tema inicial lo sigue resolviendo `ThemeProvider` de Starlight, que corre
+ * en línea dentro del `<head>` y respeta la preferencia del sistema. Este
+ * componente solo lo cambia a partir de ahí, guardando en la misma clave de
+ * `localStorage` para no dividir el estado en dos sitios.
+ */
+---
+
+<starlight-theme-toggle>
+  <button type="button" class="theme-toggle" aria-label="Cambiar de tema">
+    <svg
+      class="theme-toggle__icon theme-toggle__sun"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.75"
+      stroke-linecap="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="4"></circle>
+      <path
+        d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+      ></path>
+    </svg>
+    <svg
+      class="theme-toggle__icon theme-toggle__moon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.75"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a7 7 0 1 0 10.5 10.5Z"></path>
+    </svg>
+  </button>
+</starlight-theme-toggle>
+
+<script>
+  class StarlightThemeToggle extends HTMLElement {
+    constructor() {
+      super();
+      const button = this.querySelector("button");
+      if (!button) return;
+
+      const isDark = () => document.documentElement.dataset.theme !== "light";
+
+      // La etiqueta anuncia la acción, no el estado: quien usa lector de
+      // pantalla necesita saber qué pasa al pulsar.
+      const sync = () => {
+        button.setAttribute(
+          "aria-label",
+          isDark() ? "Cambiar a tema claro" : "Cambiar a tema oscuro"
+        );
+      };
+
+      button.addEventListener("click", () => {
+        const next = isDark() ? "light" : "dark";
+        document.documentElement.dataset.theme = next;
+        try {
+          localStorage.setItem("starlight-theme", next);
+        } catch {
+          // Modo privado o almacenamiento bloqueado: el cambio vale para esta
+          // página aunque no se pueda recordar.
+        }
+        sync();
+      });
+
+      sync();
+    }
+  }
+
+  customElements.define("starlight-theme-toggle", StarlightThemeToggle);
+</script>

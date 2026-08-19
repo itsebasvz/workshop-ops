@@ -41,7 +41,10 @@ export default defineConfig({
         "./src/styles/components.css",
       ],
       components: {
+        Header: "./src/components/overrides/Header.astro",
+        ThemeProvider: "./src/components/overrides/ThemeProvider.astro",
         SiteTitle: "./src/components/overrides/SiteTitle.astro",
+        ThemeSelect: "./src/components/overrides/ThemeSelect.astro",
         Footer: "./src/components/overrides/Footer.astro",
       },
       social: [

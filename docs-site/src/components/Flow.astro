@@ -1,0 +1,36 @@
+---
+/**
+ * La arquitectura como flujo.
+ *
+ * Cada nodo dice el servicio, qué hace y qué rol del equipo lo trabaja. Esa
+ * tercera columna es la que convierte un diagrama en un reparto de tareas: se
+ * ve de un vistazo qué toca en cada asiento.
+ */
+import type { Track } from "../config/tracks";
+
+interface Props {
+  track: Track;
+}
+
+const { track } = Astro.props;
+---
+
+<ol class="flow" style={`--flow-accent: var(--track-${track.accent}-ink)`}>
+  {
+    track.stack.map((node, index) => (
+      <li class="flow__node">
+        <span class="flow__index" aria-hidden="true">
+          {index + 1}
+        </span>
+        <span class="flow__service">{node.service}</span>
+        <span class="flow__what">{node.what}</span>
+        <span class="flow__role">{node.role}</span>
+        {node.via && (
+          <span class="flow__via">
+            + llama a <strong>{node.via}</strong>
+          </span>
+        )}
+      </li>
+    ))
+  }
+</ol>

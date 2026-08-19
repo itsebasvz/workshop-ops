@@ -12,41 +12,60 @@ head:
 ---
 
 import Hero from "../../components/Hero.astro";
-import TrackCard from "../../components/TrackCard.astro";
+import Stats from "../../components/Stats.astro";
+import TrackPanel from "../../components/TrackPanel.astro";
+import Phases from "../../components/Phases.astro";
 import Note from "../../components/Note.astro";
+import Reveal from "../../components/Reveal.astro";
 import { activeTracks } from "../../config/tracks";
 import { EVENT, ROLES } from "../../config/event";
 
 <Hero />
 
-<section class="section">
-  <h2 class="section__title">Elige tu track</h2>
+<Stats />
+
+<section class="section" data-reveal>
+  <p class="section__kicker">01 · El proyecto</p>
+  <h2 class="section__title">Qué vas a construir</h2>
   <p class="section__lead">
-    Cualquier persona puede elegir cualquiera de los tracks. Ambos se construyen
-    con los mismos servicios, así que lo que aprendas sirve para los dos.
+    No es un ejemplo de juguete. Es una aplicación con frontend, API, base de
+    datos y búsqueda en lenguaje natural, desplegada en tu propia cuenta de AWS
+    con infraestructura como código.
   </p>
 
-  <div class="grid grid--2">
-    {activeTracks().map((track) => <TrackCard track={track} />)}
-  </div>
+  {activeTracks().map((track) => <TrackPanel track={track} />)}
 </section>
 
-<section class="section">
-  <h2 class="section__title">Cómo funciona</h2>
+<section class="section" data-reveal>
+  <p class="section__kicker">02 · El día</p>
+  <h2 class="section__title">Cómo se reparten las tres horas</h2>
   <p class="section__lead">
-    Dentro de tu track te integras a un equipo pequeño. Es una simulación de cómo
-    trabaja un equipo profesional de verdad —ramas, pull requests, code review,
-    deploy— acompañada todo el tiempo por mentores.
+    El bloque de construcción se lleva casi la mitad del tiempo. El resto es
+    contexto, integración y contar lo que hiciste —que también es parte del
+    trabajo.
   </p>
 
-  <div class="grid grid--3">
-    {ROLES.map((role) => (
-      <div class="role">
+  <Phases />
+</section>
+
+<section class="section" data-reveal>
+  <p class="section__kicker">03 · Tu equipo</p>
+  <h2 class="section__title">Cinco roles, un repositorio</h2>
+  <p class="section__lead">
+    Dentro del track te integras a un equipo pequeño y eliges un rol. Se trabaja
+    como se trabaja de verdad: ramas, pull requests y code review, con mentores
+    al lado todo el tiempo.
+  </p>
+
+  <ol class="roles">
+    {ROLES.map((role, index) => (
+      <li class="role">
+        <span class="role__n" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
         <span class="role__name">{role.label}</span>
         <span class="role__hint">{role.hint}</span>
-      </div>
+      </li>
     ))}
-  </div>
+  </ol>
 
   <Note kind="tip" title="El entorno ya está listo">
     El repositorio, la arquitectura base y las tareas están preparados de
@@ -54,10 +73,11 @@ import { EVENT, ROLES } from "../../config/event";
   </Note>
 </section>
 
-<section class="section">
-  <h2 class="section__title">Qué te llevas</h2>
+<section class="section" data-reveal>
+  <p class="section__kicker">04 · Al terminar</p>
+  <h2 class="section__title">Qué te llevas a casa</h2>
   <p class="section__lead">
-    Todo lo de esta lista es tuyo al terminar y lo puedes enseñar en una entrevista.
+    Todo lo de esta lista es tuyo y lo puedes enseñar en una entrevista.
   </p>
 
   <ul class="deliverables">
@@ -65,15 +85,31 @@ import { EVENT, ROLES } from "../../config/event";
   </ul>
 </section>
 
-<section class="section">
-  <h2 class="section__title">Qué necesitas traer</h2>
+<section class="section" data-reveal>
+  <div class="cta">
+    <div class="cta__copy">
+      <p class="section__kicker">05 · Antes de venir</p>
+      <h2 class="section__title">Solo necesitas tres cosas</h2>
+      <ul class="cta__list">
+        {EVENT.bring.map((item) => <li>{item}</li>)}
+      </ul>
+      <p class="cta__note">
+        No necesitas ser experta. Necesitas saber programar algo y querer
+        aprender el resto en el proceso: los mentores están ahí precisamente
+        para eso.
+      </p>
+    </div>
 
-  <ul class="deliverables">
-    {EVENT.bring.map((item) => <li>{item}</li>)}
-  </ul>
-
-  <Note kind="community" title="No necesitas ser experta">
-    Necesitas saber programar algo y querer aprender el resto en el proceso.
-    Los mentores están ahí precisamente para eso.
-  </Note>
+    <div class="cta__actions">
+      <a class="btn btn--primary" href="/empezar/requisitos">
+        Preparar mi entorno
+        <span class="btn__arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="btn btn--ghost" href={EVENT.registrationUrl}>
+        Reservar mi lugar
+      </a>
+    </div>
+  </div>
 </section>
+
+<Reveal />
