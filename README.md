@@ -8,6 +8,8 @@ público [`safe-spot-aws-spectrum`](https://github.com/itsebasvz/safe-spot-aws-s
 
 | Archivo | Qué contiene |
 | --- | --- |
+| [`docs-site/`](docs-site/) | **La plataforma de documentación** que leerán las participantes. Astro + Starlight, desplegada en [safespace-network.vercel.app](https://safespace-network.vercel.app). |
+| [`docs-site/DESIGN.md`](docs-site/DESIGN.md) | El sistema de diseño: tokens, tipografía, componentes, accesibilidad medida y reglas de uso de la marca. |
 | [`WALKTHROUGH-estudiante.md`](WALKTHROUGH-estudiante.md) | El recorrido de 10 pasos para hacer el workshop **en primera persona**, desde una cuenta limpia: comandos, qué debes ver y qué mirar en cada paso. Empieza por aquí. |
 | [`RUNBOOK-dry-run.md`](RUNBOOK-dry-run.md) | El mismo camino desde la mirada de quien facilita: tiempos reales medidos, resultados del ensayo y qué queda pendiente de verificar. |
 | [`notes/decisions.md`](notes/decisions.md) | Deltas respecto al Notion, con la evidencia o la documentación que respalda cada decisión. |
