@@ -5,7 +5,12 @@ Cada paso trae el comando, lo que debes ver, y qué mirar mientras tanto.
 
 - Repo: https://github.com/itsebasvz/safe-spot-aws-spectrum
 - Región: `us-east-1` · Stack: `safe-spot`
-- Tiempo de máquina: ~2 min · Tiempo real con lectura: 25–35 min
+- Duración de **este ensayo en solitario**: 25–35 min (de los cuales ~4½ min son de máquina)
+
+> ℹ️ **Esto no dura lo mismo que el workshop.** El evento son 180 min con ~30 personas; este
+> recorrido es una persona sola, que ya sabe qué hace cada paso, con la cuenta AWS ya creada y
+> sin preguntas de por medio. El desglose de los 180 min está abajo, en
+> [«Cómo se relaciona con la agenda»](#cómo-se-relaciona-con-la-agenda-de-180-min).
 
 ---
 
@@ -299,3 +304,36 @@ silencio — es la fuga de recursos más común al empezar con serverless.
 
 **Si algo se rompe, anótalo con el paso y el mensaje exacto** — eso es justamente lo que este
 ensayo busca encontrar antes de que lo encuentren 30 personas a la vez.
+
+---
+
+## Cómo se relaciona con la agenda de 180 min
+
+Este recorrido cubre el **camino técnico**, que es la parte más corta del workshop. La agenda
+del Notion reparte así los 180 minutos:
+
+| Bloque de la agenda | Min | Pasos de este recorrido | Máquina |
+| --- | ---: | --- | ---: |
+| 🔐 Acceso a AWS + CloudShell | 30 | Paso 0 | 0 s |
+| 🌈 Problema + demo + arquitectura | 15 | — (solo exposición) | 0 s |
+| ☁️ SAM deploy | 15 | Pasos 1–3 | 73 s |
+| 🗺️ Mapa | 20 | Paso 4 | 13 s |
+| 🫶 Datos | 20 | Paso 5 | 2 s |
+| ⚡ Backend serverless | 25 | Paso 7 | ~3 s |
+| ✨ IA | 25 | Pasos 6 y 8 | ~40 s |
+| 🌈 Integración | 20 | Paso 9 | ~70 s |
+| 🧹 Cierre | 10 | Paso 10 | 70 s |
+| **Total** | **180** | | **~4 min 30 s** |
+
+**45 de los 180 minutos no llevan un solo comando** — son onboarding de cuentas y explicación
+de la arquitectura. Los 135 restantes contienen cuatro minutos y medio de máquina.
+
+La desproporción es deliberada. Lo que llena el bloque de 25 minutos de IA no es esperar a
+Bedrock: es entender por qué el modelo solo traduce a `{category, signals}` y por qué el
+filtrado lo hace después código determinista. Los comandos son la excusa para tener algo
+concreto delante mientras se explica.
+
+**Consecuencia para quien facilita:** el riesgo del workshop no es quedarse sin tiempo en la
+parte técnica —ahí sobra margen de sobra—, sino el bloque de 30 minutos de acceso a AWS. Es el
+único impredecible (verificación por SMS, tarjeta, MFA, cuentas recién creadas) y el único que
+no se arregla escribiendo mejor código.
