@@ -10,11 +10,13 @@ import { EVENT } from "../config/event";
  * que para un evento a semanas vista sigue siendo informativa.
  */
 
+// `short` se usa en pantallas estrechas: "Segundos" no cabe en una columna
+// de cuatro a 390 px y se partía en dos líneas.
 const UNITS = [
-  { key: "d", label: "Días" },
-  { key: "h", label: "Horas" },
-  { key: "m", label: "Minutos" },
-  { key: "s", label: "Segundos" },
+  { key: "d", label: "Días", short: "Días" },
+  { key: "h", label: "Horas", short: "Hrs" },
+  { key: "m", label: "Minutos", short: "Min" },
+  { key: "s", label: "Segundos", short: "Seg" },
 ] as const;
 
 const remaining = Math.max(0, new Date(EVENT.startsAt).getTime() - Date.now());
@@ -29,12 +31,15 @@ const initial: Record<string, number> = {
 
 <ul class="countdown" data-countdown data-target={EVENT.startsAt} aria-label="Cuenta atrás para el evento">
   {
-    UNITS.map(({ key, label }) => (
+    UNITS.map(({ key, label, short }) => (
       <li class="countdown__unit">
         <span class="countdown__n" data-unit={key}>
           {String(initial[key]).padStart(2, "0")}
         </span>
-        <span class="countdown__label">{label}</span>
+        <span class="countdown__label">
+          <span class="countdown__long">{label}</span>
+          <span class="countdown__short" aria-hidden="true">{short}</span>
+        </span>
       </li>
     ))
   }

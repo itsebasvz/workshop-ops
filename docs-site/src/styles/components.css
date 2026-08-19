@@ -232,6 +232,28 @@ body:has(.hero) .content-panel:first-of-type {
   letter-spacing: var(--track-wide);
   text-transform: uppercase;
   color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.countdown__short {
+  display: none;
+}
+
+/* En estrecho se muestra la abreviatura. El nombre completo sigue en el DOM
+   para quien use lector de pantalla; la abreviatura va con aria-hidden. */
+@media (max-width: 32rem) {
+  .countdown__long {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .countdown__short {
+    display: inline;
+  }
 }
 
 /* --- Rejilla de tarjetas ------------------------------------------------- */
