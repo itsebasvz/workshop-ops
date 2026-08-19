@@ -195,17 +195,19 @@ body:has(.hero) .content-panel:first-of-type {
 }
 
 /* --- Cuenta atrás -------------------------------------------------------- */
+/* Rejilla de cuatro columnas en lugar de flex: con `flex-wrap` las unidades
+   se partían 3 + 1 en móvil, que se lee como un error de maquetación. */
 .countdown {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--s-2);
   margin-top: var(--s-8);
   padding: 0;
   list-style: none;
+  max-width: 26rem;
 }
 
 .countdown__unit {
-  min-width: 4.5rem;
   padding: var(--s-3) var(--s-4);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
