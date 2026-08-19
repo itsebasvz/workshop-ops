@@ -272,9 +272,11 @@ Ninguno de los dos era detectable sin abrir un navegador.
 
 Estas son las cosas que el ensayo **no** pudo cubrir:
 
-- [ ] **El ensayo dentro de AWS CloudShell.** Se validó desde Linux local. CloudShell trae SAM y
-      `boto3` preinstalados, y las Lambdas no tienen dependencias, así que `sam build` no debería
-      depender de la versión de Python del entorno — pero conviene confirmarlo allí (Gate A/C).
+- [x] ~~**El ensayo dentro de AWS CloudShell.**~~ **Verificado el 2026-08-19** en `us-east-1`:
+      clonado, `preflight.sh`, `sam build`, `sam deploy`, `publish-frontend.sh`, `seed.py` y
+      `GET /places` funcionan sin instalar nada. **Gate A/C cerrado.**
+      Nota: en CloudShell **no hace falta crear un entorno virtual** — `boto3` ya está. Esa
+      instrucción del walkthrough aplica solo a la ruta local.
 - [ ] **El ensayo desde una cuenta AWS recién creada.** La validación se hizo en una cuenta con
       historial.
 - [ ] **Gate F del Notion:** dárselo a alguien que no conozca el repo y medir dónde se atasca.
@@ -287,6 +289,12 @@ Estas son las cosas que el ensayo **no** pudo cubrir:
 
 Ver `notes/decisions.md` para el detalle. En resumen:
 
+0. **La lista de lugares se cacheaba en el navegador.** `GET /places` no enviaba `Cache-Control`,
+   así que el navegador aplicaba cacheo heurístico (RFC 9111 §4.2.2) y reutilizaba la respuesta
+   vacía obtenida antes del seed: el mapa seguía sin pines hasta forzar el refresco. Afectaba a
+   **todas** las participantes, porque el recorrido manda abrir el sitio vacío en el bloque del
+   mapa y recargar en el de datos. Corregido con `Cache-Control: no-store`. Encontrado en el
+   ensayo en vivo del 2026-08-19, no en las pruebas automatizadas.
 1. **La API key de Amazon Location solo acepta comodines de servicio** (`geo-maps:*`, `geo-places:*`).
    Las acciones concretas fallan con un error engañoso. Este fue el único bloqueo real del ensayo.
 2. **`CommaDelimitedList` rompe `sam build`** cuando se usa con `!Join` en Outputs.
