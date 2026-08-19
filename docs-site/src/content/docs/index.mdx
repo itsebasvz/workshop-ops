@@ -4,6 +4,11 @@ description: Guía del track SafeSpace Network del AWSpectrum Impact Lab.
 template: splash
 editUrl: false
 pagefind: false
+head:
+  # Sin esto Starlight compone "SafeSpace Network | SafeSpace Network",
+  # porque el título de la página coincide con el del sitio.
+  - tag: title
+    content: SafeSpace Network · AWSpectrum Impact Lab
 ---
 
 import Hero from "../../components/Hero.astro";
