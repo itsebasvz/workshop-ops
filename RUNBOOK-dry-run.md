@@ -1,10 +1,10 @@
-# 🧪 Safe Spot — runbook del ensayo
+# 🧪 Safe Space — runbook del ensayo
 
 **Cómo ejecutar el workshop exactamente como lo hará una participante, y qué debes ver en cada paso.**
 
 Este documento vive **fuera** del repo que clonan las participantes. Es para el equipo.
 
-- Repo del ensayo: `awspectrum-safe-spot/`
+- Repo del ensayo: `awspectrum-safe-space/`
 - Cuenta usada en la validación: `180670196186` · región `us-east-1`
 - Fecha del ensayo: **2026-08-18**
 - Resultado: ✅ ciclo completo verificado dos veces desde cero
@@ -33,7 +33,7 @@ Este documento vive **fuera** del repo que clonan las participantes. Es para el 
 ## Antes de empezar
 
 ```bash
-cd awspectrum-safe-spot
+cd awspectrum-safe-space
 ```
 
 Requisitos que asume el ensayo: AWS CloudShell en `us-east-1`, o un entorno local con AWS CLI, SAM
@@ -54,8 +54,8 @@ CLI, `python3` y `boto3`.
 **Debes ver:**
 
 ```
-🌈 Safe Spot · preflight
-Región objetivo: us-east-1 · Stack: safe-spot
+🌈 Safe Space · preflight
+Región objetivo: us-east-1 · Stack: safe-space
 
 Herramientas
   ✓ AWS CLI aws-cli/…
@@ -73,7 +73,7 @@ Servicios
   ✓ S3 Block Public Access · sin bloqueo a nivel de cuenta
 
 Estado previo
-  ✓ No hay una stack 'safe-spot' previa · deploy limpio
+  ✓ No hay una stack 'safe-space' previa · deploy limpio
 
 ✓ Todo listo. Continúa con: sam build && sam deploy
 ```
@@ -93,10 +93,10 @@ sam build && sam deploy
 ```
 
 **Debes ver:** `Build Succeeded`, luego la tabla de recursos y
-`Successfully created/updated stack - safe-spot in us-east-1`.
+`Successfully created/updated stack - safe-space in us-east-1`.
 
 **Momento de enseñanza mientras aprovisiona (~70 s):** abre en la consola
-**CloudFormation → Stacks → safe-spot → Resources**. Ahí se ve que SAM terminó creando una stack de
+**CloudFormation → Stacks → safe-space → Resources**. Ahí se ve que SAM terminó creando una stack de
 CloudFormation, y que dentro viven la tabla, las Lambdas, el HTTP API, el bucket y la API key.
 
 **Outputs esperados:** `ApiUrl`, `WebsiteUrl`, `WebsiteBucketName`, `PlacesTableName`,
@@ -113,13 +113,13 @@ CloudFormation, y que dentro viven la tabla, las Lambdas, el HTTP API, el bucket
 **Debes ver:**
 
 ```
-  ✓ Outputs leídos de la stack safe-spot
-  ✓ API key de Amazon Location obtenida (safe-spot-maps-key)
+  ✓ Outputs leídos de la stack safe-space
+  ✓ API key de Amazon Location obtenida (safe-space-maps-key)
   ✓ frontend/config.js generado
-  ✓ Frontend sincronizado con s3://safe-spot-web-<cuenta>
+  ✓ Frontend sincronizado con s3://safe-space-web-<cuenta>
 
-Abre tu Safe Spot:
-  http://safe-spot-web-<cuenta>.s3-website-us-east-1.amazonaws.com
+Abre tu Safe Space:
+  http://safe-space-web-<cuenta>.s3-website-us-east-1.amazonaws.com
 ```
 
 **Momento de enseñanza:** abre `frontend/config.js`. Explica por qué existe este script: CloudFormation
@@ -140,7 +140,7 @@ python3 scripts/seed.py
 
 **Momento de enseñanza:** abre `data/seed.json` y mira el bloque `provenance` de cualquier registro.
 Cada dato declara de dónde viene y cuándo se verificó. Luego abre
-**DynamoDB → Tablas → safe-spot-places → Explorar elementos** para ver los mismos items en la tabla.
+**DynamoDB → Tablas → safe-space-places → Explorar elementos** para ver los mismos items en la tabla.
 
 Recarga el sitio: ahora hay 18 pines.
 
@@ -149,7 +149,7 @@ Recarga el sitio: ahora hay 18 pines.
 ## Paso 5 · Las tres rutas
 
 ```bash
-API=$(aws cloudformation describe-stacks --stack-name safe-spot \
+API=$(aws cloudformation describe-stacks --stack-name safe-space \
       --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" --output text)
 ```
 
@@ -194,10 +194,10 @@ Vale la pena ensayarlo al menos una vez antes del evento, porque es el rescue pa
 
 ```bash
 # rompe Bedrock a propósito
-aws lambda update-function-configuration --function-name safe-spot-search \
+aws lambda update-function-configuration --function-name safe-space-search \
   --environment 'Variables={BEDROCK_MODEL_ID=amazon.modelo-que-no-existe-v1:0,ALLOWED_SIGNALS=lgbtq_space\,neutral_bathroom\,accessible\,pronouns_respected\,couples_friendly\,quiet\,inclusive_healthcare,ALLOWED_CATEGORIES=cafe\,restaurant\,bar\,bookstore\,clinic\,community_center\,museum\,park\,coworking\,shop}' \
   --region us-east-1 >/dev/null
-aws lambda wait function-updated-v2 --function-name safe-spot-search --region us-east-1
+aws lambda wait function-updated-v2 --function-name safe-space-search --region us-east-1
 
 curl -s -X POST "$API/search" -H 'content-type: application/json' \
   -d '{"query":"café tranquilo con baño neutral"}'
@@ -233,11 +233,11 @@ tiene una única fuente de verdad. Es el ejercicio que mejor demuestra la arquit
 Pide escribir `borrar` para confirmar. Después, verifica que no queda nada:
 
 ```bash
-aws cloudformation describe-stacks --stack-name safe-spot --region us-east-1     # debe fallar
-aws s3 ls s3://safe-spot-web-<cuenta>                                            # debe fallar
-aws dynamodb describe-table --table-name safe-spot-places --region us-east-1     # debe fallar
-aws location list-keys --region us-east-1 --query 'Entries[].KeyName'            # sin safe-spot
-aws logs describe-log-groups --log-group-name-prefix /aws/lambda/safe-spot \
+aws cloudformation describe-stacks --stack-name safe-space --region us-east-1     # debe fallar
+aws s3 ls s3://safe-space-web-<cuenta>                                            # debe fallar
+aws dynamodb describe-table --table-name safe-space-places --region us-east-1     # debe fallar
+aws location list-keys --region us-east-1 --query 'Entries[].KeyName'            # sin safe-space
+aws logs describe-log-groups --log-group-name-prefix /aws/lambda/safe-space \
     --region us-east-1 --query 'logGroups[].logGroupName'                        # vacío
 ```
 

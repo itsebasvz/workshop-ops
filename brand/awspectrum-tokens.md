@@ -65,17 +65,17 @@ Tailwind: rojo, naranja, verde, azul y violeta.
 https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap
 ```
 
-| Familia | Pesos | Uso en Safe Spot |
+| Familia | Pesos | Uso en Safe Space |
 | --- | --- | --- |
 | **Outfit** | 400–800 | títulos, botones, nombres de lugar |
 | **Inter** | 300–700 | cuerpo de texto e interfaz |
 
 ---
 
-## Cómo se aplican en Safe Spot
+## Cómo se aplican en Safe Space
 
 Todos los tokens viven como custom properties al principio de
-`awspectrum-safe-spot/frontend/styles.css`:
+`awspectrum-safe-space/frontend/styles.css`:
 
 ```css
 :root {

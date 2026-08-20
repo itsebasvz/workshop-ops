@@ -79,7 +79,7 @@ Los log groups que Lambda crea automáticamente **sobreviven a `sam delete`**. D
 `AWS::Logs::LogGroup` con `RetentionInDays: 7` conseguimos dos cosas: retención acotada (sin esto los
 logs se guardan indefinidamente) y un cleanup que de verdad deja la cuenta limpia.
 
-Verificado: tras `cleanup.sh`, `logs describe-log-groups --log-group-name-prefix /aws/lambda/safe-spot`
+Verificado: tras `cleanup.sh`, `logs describe-log-groups --log-group-name-prefix /aws/lambda/safe-space`
 devuelve vacío.
 
 ---
@@ -143,7 +143,7 @@ la cuenta tiene Block Public Access activo sin desactivarlo.
 Sin esa opción en `samconfig.toml`, `sam sync --code` termina con:
 
 ```
-Cannot find any versions for layer safe-spot…-SearchFunction…-DepLayer.
+Cannot find any versions for layer safe-space…-SearchFunction…-DepLayer.
 Try sam sync without --code or sam deploy.
 ```
 

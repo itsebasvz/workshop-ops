@@ -1,10 +1,10 @@
-# 🌈 Safe Spot — recorrido completo como estudiante
+# 🌈 Safe Space — recorrido completo como estudiante
 
 **Ponte en los zapatos de una participante y ejecuta el workshop entero, desde cero.**
 Cada paso trae el comando, lo que debes ver, y qué mirar mientras tanto.
 
-- Repo: https://github.com/itsebasvz/awspectrum-safe-spot
-- Región: `us-east-1` · Stack: `safe-spot`
+- Repo: https://github.com/itsebasvz/awspectrum-safe-space
+- Región: `us-east-1` · Stack: `safe-space`
 - Duración de **este ensayo en solitario**: 25–35 min (de los cuales ~4½ min son de máquina)
 
 > ℹ️ **Esto no dura lo mismo que el workshop.** El evento son 180 min con ~30 personas; este
@@ -34,8 +34,8 @@ Nadie instala nada.
 ## Paso 1 · Clona el repo
 
 ```bash
-git clone https://github.com/itsebasvz/awspectrum-safe-spot.git
-cd awspectrum-safe-spot
+git clone https://github.com/itsebasvz/awspectrum-safe-space.git
+cd awspectrum-safe-space
 ```
 
 **Mira esto antes de seguir:** `template.yaml`. Son ~200 líneas y describen la aplicación
@@ -56,7 +56,7 @@ completa. No hay nada más escondido; lo que no esté ahí, no existe en tu cuen
 ```
 
 **Qué hace:** solo *lee*. Comprueba herramientas, credenciales, región, que Bedrock responda,
-que Amazon Location sea accesible y que no exista ya una stack `safe-spot`. **No modifica nada
+que Amazon Location sea accesible y que no exista ya una stack `safe-space`. **No modifica nada
 de tu cuenta** — ni siquiera cuando encuentra un problema; te dice cuál es y te deja decidir.
 
 **Si Bedrock sale como aviso amarillo:** sigue adelante. La búsqueda tiene plan B y lo veremos
@@ -71,10 +71,10 @@ sam build && sam deploy
 ```
 
 **Esperado:** `Build Succeeded`, la tabla de cambios, y al final
-`Successfully created/updated stack - safe-spot in us-east-1`.
+`Successfully created/updated stack - safe-space in us-east-1`.
 
 **Mientras aprovisiona**, abre en otra pestaña
-**CloudFormation → Stacks → safe-spot → Resources**. Ahí ves aparecer, uno a uno: la tabla de
+**CloudFormation → Stacks → safe-space → Resources**. Ahí ves aparecer, uno a uno: la tabla de
 DynamoDB, las dos Lambdas, el HTTP API, el bucket de S3 y la API key de Amazon Location.
 
 Esa es la idea central del bloque: escribiste un archivo, y AWS construyó y conectó
@@ -94,13 +94,13 @@ Esa es la idea central del bloque: escribiste un archivo, y AWS construyó y con
 **Esperado:**
 
 ```
-  ✓ Outputs leídos de la stack safe-spot
-  ✓ API key de Amazon Location obtenida (safe-spot-maps-key)
+  ✓ Outputs leídos de la stack safe-space
+  ✓ API key de Amazon Location obtenida (safe-space-maps-key)
   ✓ frontend/config.js generado
-  ✓ Frontend sincronizado con s3://safe-spot-web-<tu-cuenta>
+  ✓ Frontend sincronizado con s3://safe-space-web-<tu-cuenta>
 
-Abre tu Safe Spot:
-  http://safe-spot-web-<tu-cuenta>.s3-website-us-east-1.amazonaws.com
+Abre tu Safe Space:
+  http://safe-space-web-<tu-cuenta>.s3-website-us-east-1.amazonaws.com
 ```
 
 **Abre esa URL.** Debes ver el mapa oscuro de CDMX, **sin pines todavía** — los datos van en el
@@ -143,7 +143,7 @@ Fíjate en el bloque `provenance`: cada lugar declara de dónde salió el dato y
 verificó. En una app sobre seguridad de personas, un dato sin procedencia es un rumor con
 coordenadas.
 
-Compruébalo también en **DynamoDB → Tablas → safe-spot-places → Explorar elementos**.
+Compruébalo también en **DynamoDB → Tablas → safe-space-places → Explorar elementos**.
 
 ---
 
@@ -169,7 +169,7 @@ entrada, no el juez.
 ## Paso 7 · Las tres rutas por `curl`
 
 ```bash
-API=$(aws cloudformation describe-stacks --stack-name safe-spot --region us-east-1 \
+API=$(aws cloudformation describe-stacks --stack-name safe-space --region us-east-1 \
       --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" --output text)
 echo "$API"
 ```
@@ -218,13 +218,13 @@ El momento más útil del módulo. Apunta la Lambda a un modelo que no existe:
 ```bash
 # Lee la configuración actual, cambia solo el modelo y devuélvela entera.
 # (--environment reemplaza el mapa completo, así que hay que reenviar todas las variables.)
-ENV=$(aws lambda get-function-configuration --function-name safe-spot-search \
+ENV=$(aws lambda get-function-configuration --function-name safe-space-search \
         --region us-east-1 --query Environment.Variables --output json \
       | python3 -c "import json,sys; v=json.load(sys.stdin); v['BEDROCK_MODEL_ID']='amazon.no-existe-v1:0'; print(json.dumps({'Variables': v}))")
 
-aws lambda update-function-configuration --function-name safe-spot-search \
+aws lambda update-function-configuration --function-name safe-space-search \
   --region us-east-1 --environment "$ENV" >/dev/null
-aws lambda wait function-updated-v2 --function-name safe-spot-search --region us-east-1
+aws lambda wait function-updated-v2 --function-name safe-space-search --region us-east-1
 
 curl -s -X POST "$API/search" -H 'content-type: application/json' \
   -d '{"query":"café tranquilo con baño neutral"}'
@@ -288,9 +288,9 @@ Pide escribir `borrar` para confirmar. Tarda ~1 min.
 Comprueba que no queda nada:
 
 ```bash
-aws cloudformation describe-stacks --stack-name safe-spot --region us-east-1  # debe fallar
-aws location list-keys --region us-east-1 --query 'Entries[].KeyName'          # sin safe-spot
-aws logs describe-log-groups --log-group-name-prefix /aws/lambda/safe-spot \
+aws cloudformation describe-stacks --stack-name safe-space --region us-east-1  # debe fallar
+aws location list-keys --region us-east-1 --query 'Entries[].KeyName'          # sin safe-space
+aws logs describe-log-groups --log-group-name-prefix /aws/lambda/safe-space \
     --region us-east-1 --query 'logGroups[].logGroupName'                      # vacío
 ```
 

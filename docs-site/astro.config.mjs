@@ -55,7 +55,7 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/itsebasvz/awspectrum-safe-spot",
+          href: "https://github.com/itsebasvz/awspectrum-safe-space",
         },
         { icon: "instagram", label: "Instagram", href: "https://instagram.com/awspectrum.latam" },
       ],

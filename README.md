@@ -1,7 +1,7 @@
-# workshop-ops · Safe Spot
+# workshop-ops · Safe Space
 
 Material interno del equipo. **No es lo que clonan las participantes** — eso vive en el repo
-público [`awspectrum-safe-spot`](https://github.com/itsebasvz/awspectrum-safe-spot).
+público [`awspectrum-safe-space`](https://github.com/itsebasvz/awspectrum-safe-space).
 
 > ⚠️ **Este repo es privado a propósito.** Contiene el ID de la cuenta AWS de validación, los
 > tiempos del ensayo y notas sin pulir. No lo hagas público.
