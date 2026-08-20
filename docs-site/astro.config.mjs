@@ -16,7 +16,10 @@ const trackGroups = TRACKS.filter((track) => track.guideReady).map((track) => ({
 }));
 
 export default defineConfig({
-  site: "https://safespace-network.vercel.app",
+  // Es la que va en el sitemap y en las URL canónicas, así que tiene que ser
+  // la definitiva. `safespace-network.vercel.app` sigue respondiendo —era la
+  // anterior y puede estar compartida por ahí— pero ya no es la de referencia.
+  site: "https://awspectrum-impact-lab.vercel.app",
   integrations: [
     starlight({
       title: "SafeSpace Network",
