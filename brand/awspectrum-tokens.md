@@ -75,7 +75,7 @@ https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=O
 ## Cómo se aplican en Safe Spot
 
 Todos los tokens viven como custom properties al principio de
-`safe-spot-aws-spectrum/frontend/styles.css`:
+`awspectrum-safe-spot/frontend/styles.css`:
 
 ```css
 :root {

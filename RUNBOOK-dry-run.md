@@ -4,7 +4,7 @@
 
 Este documento vive **fuera** del repo que clonan las participantes. Es para el equipo.
 
-- Repo del ensayo: `safe-spot-aws-spectrum/`
+- Repo del ensayo: `awspectrum-safe-spot/`
 - Cuenta usada en la validación: `180670196186` · región `us-east-1`
 - Fecha del ensayo: **2026-08-18**
 - Resultado: ✅ ciclo completo verificado dos veces desde cero
@@ -33,7 +33,7 @@ Este documento vive **fuera** del repo que clonan las participantes. Es para el 
 ## Antes de empezar
 
 ```bash
-cd safe-spot-aws-spectrum
+cd awspectrum-safe-spot
 ```
 
 Requisitos que asume el ensayo: AWS CloudShell en `us-east-1`, o un entorno local con AWS CLI, SAM

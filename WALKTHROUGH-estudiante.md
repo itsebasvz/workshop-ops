@@ -3,7 +3,7 @@
 **Ponte en los zapatos de una participante y ejecuta el workshop entero, desde cero.**
 Cada paso trae el comando, lo que debes ver, y qué mirar mientras tanto.
 
-- Repo: https://github.com/itsebasvz/safe-spot-aws-spectrum
+- Repo: https://github.com/itsebasvz/awspectrum-safe-spot
 - Región: `us-east-1` · Stack: `safe-spot`
 - Duración de **este ensayo en solitario**: 25–35 min (de los cuales ~4½ min son de máquina)
 
@@ -34,8 +34,8 @@ Nadie instala nada.
 ## Paso 1 · Clona el repo
 
 ```bash
-git clone https://github.com/itsebasvz/safe-spot-aws-spectrum.git
-cd safe-spot-aws-spectrum
+git clone https://github.com/itsebasvz/awspectrum-safe-spot.git
+cd awspectrum-safe-spot
 ```
 
 **Mira esto antes de seguir:** `template.yaml`. Son ~200 líneas y describen la aplicación
