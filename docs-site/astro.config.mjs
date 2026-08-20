@@ -6,10 +6,11 @@ import { TRACKS } from "./src/config/tracks.ts";
 import { EVENT } from "./src/config/event.ts";
 
 /**
- * La barra lateral se construye desde `tracks.ts`. Un track con `enabled: false`
- * no genera grupo, así que no aparece en el menú ni en el HTML compilado.
+ * La barra lateral se construye desde `tracks.ts`, y filtra por `guideReady`,
+ * no por `announced`: un track anunciado en la portada pero sin páginas
+ * escritas generaría un menú que lleva a rutas inexistentes.
  */
-const trackGroups = TRACKS.filter((track) => track.enabled).map((track) => ({
+const trackGroups = TRACKS.filter((track) => track.guideReady).map((track) => ({
   label: `${track.emoji} ${track.name}`,
   items: [{ autogenerate: { directory: track.id } }],
 }));

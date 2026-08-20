@@ -4,14 +4,17 @@
  *
  * El logo es la nube de AWSpectrum; el nombre va como texto real y no como
  * imagen, para que se pueda seleccionar, buscar y leer con lector de pantalla.
+ *
+ * Una sola línea: el evento es el AWSpectrum Impact Lab y los tracks —SafeSpace
+ * Network y Sorority— viven dentro de él. Poner uno de los dos en la cabecera
+ * de todo el sitio daba a entender que el sitio era solo de ese.
  */
+import { EVENT } from "../../config/event";
+
 const href = "/";
 ---
 
-<a class="brand" {href} aria-label="SafeSpace Network · inicio">
+<a class="brand" {href} aria-label={`${EVENT.name} · inicio`}>
   <img class="brand__logo" src="/logo.svg" alt="" width="36" height="24" />
-  <span class="brand__text">
-    <span class="brand__name">SafeSpace Network</span>
-    <span class="brand__sub">AWSpectrum Impact Lab</span>
-  </span>
+  <span class="brand__name">{EVENT.name}</span>
 </a>

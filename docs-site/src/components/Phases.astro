@@ -12,7 +12,7 @@ import { PHASES } from "../config/event";
 const total = PHASES.reduce((sum, phase) => sum + phase.minutes, 0);
 ---
 
-<ol class="phases" style={`--phase-total: ${total}`}>
+<ol class="phases not-content" style={`--phase-total: ${total}`}>
   {
     PHASES.map((phase, index) => (
       <li class="phase" style={`--phase-min: ${phase.minutes}`}>

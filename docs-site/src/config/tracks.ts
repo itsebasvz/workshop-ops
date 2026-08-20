@@ -2,11 +2,16 @@
  * Tracks del Impact Lab — única fuente de verdad.
  *
  * La barra lateral, las tarjetas de la portada y las rutas de contenido se
- * generan desde aquí. Un track con `enabled: false` no aparece en ninguna parte
- * del sitio: ni en el menú, ni en la portada, ni en el HTML generado.
+ * generan desde aquí. Hay dos interruptores, y son distintos a propósito:
  *
- * Para publicar un track: escribe sus páginas en `src/content/docs/<id>/` y pon
- * `enabled: true`. No hay que tocar nada más.
+ * - `announced`: el track se anuncia en la portada. Es una decisión de
+ *   comunicación —lo que la gente ve al elegir— y no depende de que la
+ *   documentación esté escrita.
+ * - `guideReady`: el track tiene páginas en `src/content/docs/<id>/`. Solo
+ *   entonces aparece en la barra lateral y su tarjeta enlaza a la guía.
+ *
+ * Separarlos permite anunciar un track cuyo material aún se está redactando
+ * sin generar un menú que lleve a páginas que no existen.
  */
 
 export interface Track {
@@ -17,15 +22,10 @@ export interface Track {
   summary: string;
   /** Color de acento; debe existir como token --track-<accent> en theme.css. */
   accent: "blue" | "purple";
-  /** Servicios de AWS que se usan, para la tarjeta. */
-  services: string[];
-  /**
-   * La arquitectura en orden de recorrido de una petición. Se dibuja como flujo
-   * en la portada, así que el orden importa: es el camino que sigue el dato.
-   * `via` marca un servicio al que ese nodo llama de lado, fuera de la cadena.
-   */
-  stack: Array<{ service: string; role: string; what: string; via?: string }>;
-  enabled: boolean;
+  /** Se anuncia en la portada. */
+  announced: boolean;
+  /** Tiene páginas escritas: entra en la barra lateral y su tarjeta enlaza. */
+  guideReady: boolean;
 }
 
 export const TRACKS: Track[] = [
@@ -38,19 +38,8 @@ export const TRACKS: Track[] = [
       "rápido recursos confiables en su ciudad: organizaciones, apoyo psicológico " +
       "y legal, refugios y centros comunitarios.",
     accent: "blue",
-    services: ["S3", "API Gateway", "Lambda", "DynamoDB"],
-    stack: [
-      { service: "S3", role: "Frontend", what: "Sirve el mapa y la interfaz" },
-      { service: "API Gateway", role: "Cloud", what: "La puerta de entrada HTTP" },
-      {
-        service: "Lambda",
-        role: "Backend",
-        what: "La lógica, sin un servidor que mantener",
-        via: "Bedrock",
-      },
-      { service: "DynamoDB", role: "Base de datos", what: "Los lugares seguros" },
-    ],
-    enabled: true,
+    announced: true,
+    guideReady: true,
   },
   {
     id: "sorority",
@@ -60,17 +49,39 @@ export const TRACKS: Track[] = [
       "Una plataforma que fortalece las redes de apoyo entre mujeres, con " +
       "registro de contactos de confianza y propagación de alertas en la red.",
     accent: "purple",
-    services: ["S3", "API Gateway", "Lambda", "DynamoDB"],
-    stack: [
-      { service: "S3", role: "Frontend", what: "La interfaz de la red de apoyo" },
-      { service: "API Gateway", role: "Cloud", what: "La puerta de entrada HTTP" },
-      { service: "Lambda", role: "Backend", what: "Alertas y contactos de confianza" },
-      { service: "DynamoDB", role: "Base de datos", what: "La red de cada persona" },
-    ],
-    // Pendiente de contenido. Mientras esté en false no se renderiza en ningún sitio.
-    enabled: false,
+    announced: true,
+    guideReady: false,
   },
 ];
 
-/** Los tracks que sí se publican. Úsalo siempre en lugar de TRACKS. */
-export const activeTracks = (): Track[] => TRACKS.filter((t) => t.enabled);
+/** Los que se anuncian en la portada. */
+export const announcedTracks = (): Track[] => TRACKS.filter((t) => t.announced);
+
+/** Los que tienen guía escrita: barra lateral y enlaces. */
+export const documentedTracks = (): Track[] => TRACKS.filter((t) => t.guideReady);
+
+/**
+ * La arquitectura, una sola vez.
+ *
+ * Los dos tracks se construyen con los mismos cuatro servicios y el mismo
+ * reparto de roles: dibujar el diagrama dentro de cada tarjeta repetía cuatro
+ * nodos casi idénticos y hacía parecer que eran dos arquitecturas distintas.
+ * Es justo al revés, y es el argumento de la sección: elijas el que elijas,
+ * aprendes lo mismo.
+ *
+ * El orden importa: es el camino que recorre una petición.
+ */
+export const STACK = [
+  { service: "S3", role: "Frontend", what: "Sirve la interfaz en el navegador" },
+  { service: "API Gateway", role: "Cloud", what: "La puerta de entrada HTTP" },
+  {
+    service: "Lambda",
+    role: "Backend",
+    what: "La lógica, sin un servidor que mantener",
+  },
+  { service: "DynamoDB", role: "Base de datos", what: "Los datos de la aplicación" },
+] as const;
+
+/** Lo único que se sale del tronco común. */
+export const STACK_NOTE =
+  "SafeSpace Network añade Amazon Bedrock para la búsqueda en lenguaje natural.";

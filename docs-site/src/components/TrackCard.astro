@@ -1,0 +1,39 @@
+---
+/**
+ * Tarjeta de track.
+ *
+ * Solo lo que distingue a un track del otro: el nombre y qué resuelve. La
+ * arquitectura salió de aquí a un bloque común, porque es la misma para los
+ * dos y repetirla sugería lo contrario.
+ *
+ * Sin guía escrita no hay enlace ni promesa de fecha: un botón que lleva a un
+ * 404 el día del taller cuesta más que no ponerlo.
+ */
+import type { Track } from "../config/tracks";
+
+interface Props {
+  track: Track;
+}
+
+const { track } = Astro.props;
+---
+
+<article class="track" style={`--track-accent: var(--track-${track.accent})`}>
+  <p class="track__kicker">
+    <span aria-hidden="true">{track.emoji}</span> Track
+  </p>
+
+  <h3 class="track__title">{track.name}</h3>
+  <p class="track__summary">{track.summary}</p>
+
+  {
+    track.guideReady && (
+      <a class="btn btn--primary track__cta" href={`/${track.id}/arquitectura`}>
+        Ver la guía del track
+        <span class="btn__arrow" aria-hidden="true">
+          →
+        </span>
+      </a>
+    )
+  }
+</article>

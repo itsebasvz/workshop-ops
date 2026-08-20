@@ -4,29 +4,38 @@
  *
  * Antes esto eran tres tarjetas sueltas —cuándo, dónde, formato— más la cuenta
  * atrás por su cuenta: cuatro cajas grises diciendo cuatro cosas del mismo
- * hecho. Aquí van juntas en un objeto reconocible, con su troquelado y su talón.
- * Es la única pieza de la portada que se permite ser figurativa.
+ * hecho. Aquí van juntas en un objeto reconocible, con su troquelado y su
+ * talón. Es la única pieza de la portada que se permite ser figurativa.
+ *
+ * El talón lleva el cartel oficial. El cartel ya grita la fecha, así que no se
+ * repite en grande: queda una sola línea de texto real —para que se pueda
+ * seleccionar, buscar e indexar— y el resto se ocupa de lo que el cartel no
+ * dice: la dirección exacta, el formato y cuánto falta.
+ *
+ * En escritorio el talón va al lado y el troquelado es vertical, como en un
+ * billete de verdad; apilado medía más de 900 px de alto y dejaba el titular
+ * flotando en mitad de un hueco. La cuenta atrás cruza el ancho completo:
+ * dentro de una columna estrecha sus cuatro casillas no respiran.
  */
 import { EVENT } from "../config/event";
 import Countdown from "./Countdown.astro";
+import Poster from "./Poster.astro";
 ---
 
 <aside class="ticket">
   <div class="ticket__stub">
-    <p class="ticket__kicker">{EVENT.name}</p>
-
-    <p class="ticket__date">
-      <span class="ticket__weekday">{EVENT.weekdayLabel}</span>
-      <span class="ticket__day">{EVENT.dayNumber}</span>
-      <span class="ticket__month">{EVENT.monthLabel}</span>
-    </p>
-
-    <p class="ticket__time">{EVENT.timeLabel}</p>
+    <Poster />
   </div>
 
   <div class="ticket__perf" aria-hidden="true"></div>
 
   <div class="ticket__body">
+    <p class="ticket__kicker">{EVENT.name}</p>
+
+    <p class="ticket__when">
+      {EVENT.dateLabel} · {EVENT.timeLabel}
+    </p>
+
     <p class="ticket__row">
       <span class="ticket__label">Sede</span>
       <a class="ticket__value" href={EVENT.venue.mapsUrl}>{EVENT.venue.name}</a>
@@ -38,10 +47,10 @@ import Countdown from "./Countdown.astro";
       <span class="ticket__value">Presencial, en equipos</span>
       <span class="ticket__note">{EVENT.durationLabel} · cupo limitado</span>
     </p>
+  </div>
 
-    <div class="ticket__countdown">
-      <span class="ticket__label">Faltan</span>
-      <Countdown />
-    </div>
+  <div class="ticket__countdown">
+    <span class="ticket__label">Faltan</span>
+    <Countdown />
   </div>
 </aside>

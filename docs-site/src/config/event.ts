@@ -15,12 +15,6 @@ export const EVENT = {
   timeZone: "America/Mexico_City",
   /** Texto ya formateado: evitamos depender de Intl en el cliente para algo fijo. */
   dateLabel: "Jueves 27 de agosto, 2026",
-  /* Partes sueltas de la fecha, para el billete de la portada. Se escriben a
-     mano en lugar de trocear `dateLabel` con Intl: es un dato fijo y no
-     merece código. */
-  weekdayLabel: "Jueves",
-  dayNumber: "27",
-  monthLabel: "Ago 2026",
   timeLabel: "16:00 – 20:00 h · CDMX",
   durationLabel: "3 horas de construcción",
   venue: {
@@ -64,6 +58,16 @@ export const ROLES = [
 ] as const;
 
 export type Role = (typeof ROLES)[number];
+
+/**
+ * ¿Ya empezó el taller?
+ *
+ * La guía no se abre hasta la hora de inicio. Se evalúa en el build, así que el
+ * resultado solo es válido hasta el próximo despliegue: el estado definitivo lo
+ * corrige `StartButton` en el navegador.
+ */
+export const workshopOpen = (): boolean =>
+  Date.now() >= new Date(EVENT.startsAt).getTime();
 
 /**
  * Cómo se reparten los 180 minutos.

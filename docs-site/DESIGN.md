@@ -184,11 +184,12 @@ depender de una CDN externa durante el taller.
 | Componente | Para qué | Detalle que importa |
 | --- | --- | --- |
 | `Hero` | portada | composición asimétrica; el único sitio con degradado sobre texto |
-| `Ticket` | datos del evento | fecha, sede, formato y cuenta atrás en **un solo objeto** |
+| `Ticket` | datos del evento | cartel, sede, formato y cuenta atrás en **un solo objeto** |
+| `Poster` | cartel oficial | fuente de 3365 px; el build sirve AVIF/WebP de 20–83 KB |
 | `Countdown` | cuenta atrás | el servidor pinta ya los valores: sin parpadeo de ceros |
 | `Stats` | cifras de portada | cada cifra lleva su procedencia debajo |
-| `TrackPanel` | un track a lo ancho | descripción a la izquierda, arquitectura a la derecha |
-| `Flow` | arquitectura | cada nodo dice servicio, función **y rol del equipo** |
+| `TrackCard` | un track | solo lo que lo distingue del otro; sin guía, sin enlace |
+| `Flow` | arquitectura | **una sola vez para los dos tracks**; cada nodo dice servicio, función y rol del equipo |
 | `Phases` | agenda | el ancho de cada barra es su peso real en los 180 min |
 | `Terminal` | comandos | **copia solo los comandos**, nunca el `$` ni la salida |
 | `Step` | paso numerado | para secuencias donde el orden importa |
@@ -211,6 +212,55 @@ Antes eran tres tarjetas —cuándo, dónde, formato— más la cuenta atrás po
 cajas grises diciendo cuatro cosas del mismo hecho. Reunidas en un objeto reconocible, con su
 troquelado y su talón, ocupan menos y se leen de un vistazo. Es la única pieza de la interfaz
 que se permite ser figurativa, y por eso funciona: si hubiera dos, ninguna llamaría la atención.
+
+**El cartel oficial va dentro, como arte del talón.** Puesto aparte competía con el billete y
+repetía sus mismos datos —fecha, hora y sede están dibujados en el propio cartel—. Dentro, cada
+uno hace una cosa: el cartel anuncia y el billete concreta la dirección exacta, el formato y
+cuánto falta. Debajo del cartel queda una sola línea con la fecha en texto real, para que se
+pueda seleccionar, buscar e indexar; el texto alternativo repite además lo que el cartel dice
+por dentro.
+
+### Lo compartido se dibuja una vez
+
+Los dos tracks usan los mismos cuatro servicios y el mismo reparto de roles. Con un diagrama
+dentro de cada tarjeta, la portada repetía cuatro nodos casi idénticos y sugería que eran dos
+arquitecturas distintas —justo lo contrario del argumento de la sección—. Ahora las tarjetas
+llevan solo lo que diferencia a un track del otro y la arquitectura va debajo, una vez, a lo
+ancho y en horizontal. Lo único que se sale del tronco común (Bedrock en SafeSpace) es una nota
+al pie del diagrama.
+
+**Un track sin guía escrita no promete fecha ni enseña botón.** Un enlace a una página que no
+existe cuesta más el día del taller que la ausencia del enlace.
+
+### Dos interruptores por track, no uno
+
+`announced` decide si el track se anuncia en la portada; `guideReady`, si tiene páginas escritas.
+Son decisiones distintas —comunicación y contenido— y juntarlas en un solo `enabled` obligaba a
+elegir entre anunciar un track con el menú roto o no anunciarlo.
+
+### Starlight no debe maquetar nuestros componentes
+
+Starlight separa con `margin-top` **todo** elemento que siga a un hermano dentro de
+`.sl-markdown-content`, a cualquier profundidad. Eso desalineaba la segunda tarjeta de track
+16 px respecto a la primera y metía una franja de fondo sobre el cartel, porque dentro de
+`<picture>` el `<img>` va detrás de los `<source>`. La solución no es pelear regla por regla:
+los componentes propios llevan la clase `not-content`, que Starlight ofrece justo para esto.
+
+No la llevan `Note` ni `Step`: su cuerpo es contenido redactado y sí quiere el espaciado de
+Markdown.
+
+### La cabecera se alinea con el texto
+
+El buscador arranca exactamente donde arranca el texto de la página: ancho de la barra lateral
+más el relleno del panel. Es la misma cuenta en portada y en guía, así que no salta al navegar.
+
+### El ancho que importa es el del contenedor
+
+Las abreviaturas de la cuenta atrás (`Días / Hrs / Min / Seg`) se activaban con una consulta de
+**viewport**, y «SEGUNDOS» se salía de su celda en escritorio: lo que decide si la palabra cabe
+es el ancho del billete, no el de la ventana. Ahora es una consulta de **contenedor**. Regla
+general para este sistema: si un componente puede vivir en columnas de anchos distintos, sus
+puntos de ruptura son de contenedor.
 
 ### Por qué `Terminal` copia solo los comandos
 
@@ -316,9 +366,10 @@ El script que lo genera está en [`../brand/build-logo.py`](../brand/build-logo.
 
 ## 10. Cómo extender esto
 
-**Añadir un track** — un registro en `src/config/tracks.ts` y sus páginas en
-`src/content/docs/<id>/`. La barra lateral y las tarjetas de la portada se generan solas. Un
-track con `enabled: false` no aparece en ninguna parte, ni siquiera en el HTML compilado.
+**Añadir un track** — un registro en `src/config/tracks.ts`. `announced: true` lo saca en la
+portada; `guideReady: true` lo mete en la barra lateral y le pone enlace, y para eso hacen falta
+sus páginas en `src/content/docs/<id>/`. Con los dos en `false` no aparece en ninguna parte, ni
+siquiera en el HTML compilado.
 
 **Cambiar datos del evento** — `src/config/event.ts`. La portada, la cuenta atrás y el pie leen
 de ahí.

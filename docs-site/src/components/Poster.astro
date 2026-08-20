@@ -1,0 +1,43 @@
+---
+/**
+ * Cartel oficial del evento.
+ *
+ * El original de Luma son 3365 × 3361 px y 2.2 MB. Se guarda casi entero en
+ * `src/assets/` como fuente —es la mejor calidad que existe— y `astro:assets`
+ * genera en el build las versiones que se sirven: AVIF y WebP en cuatro
+ * anchos, con JPEG de reserva. El navegador elige; nadie descarga los 2 MB.
+ *
+ * "Casi" entero: el archivo de Luma trae un filete negro de unos 5 px cocido
+ * en los cuatro lados, que sobre el billete se veía como una barra oscura por
+ * encima del cartel. Se recortaron 8 px por lado (`magick -shave 8x8`), así que
+ * la fuente mide 3349 × 3345 y sus bordes son ya el lavanda del propio cartel.
+ *
+ * El texto alternativo describe la escena y repite los datos que el cartel
+ * lleva dentro. En el billete el cartel es la única fuente visual de la fecha,
+ * así que quien no ve la imagen tiene que quedarse con la misma información,
+ * no con "cartel del evento".
+ */
+import { Picture } from "astro:assets";
+import cartel from "../assets/impact-lab-cartel.jpg";
+
+const alt =
+  "Cartel del AWSpectrum Impact Lab. Sobre fondo rosa, tres nubes de colores " +
+  "—roja, verde y amarilla— con ojos grandes trabajan juntas: una escribe en " +
+  "unas hojas y otra teclea en una laptop. Arriba, el título «Impact Lab» en " +
+  "un cartel amarillo y el logotipo de awspectrum. Abajo, tres etiquetas: " +
+  "04:00 PM, 27 agosto 2026 y Centro Cultural Futurama.";
+---
+
+<div class="poster">
+  <Picture
+    src={cartel}
+    {alt}
+    formats={["avif", "webp"]}
+    fallbackFormat="jpg"
+    width={1024}
+    widths={[384, 640, 768, 1024]}
+    sizes="(max-width: 62rem) min(100vw - 4rem, 28rem), 18rem"
+    loading="eager"
+    decoding="async"
+  />
+</div>

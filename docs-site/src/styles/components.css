@@ -34,6 +34,22 @@
   min-width: 0;
 }
 
+/* Con barra lateral, el buscador arranca donde arranca el texto de la página.
+   La cuenta: el contenido empieza a `--sl-sidebar-width` del borde más el
+   relleno del panel; la barra ya lleva ese mismo relleno, así que a la primera
+   columna le toca el ancho de la barra lateral menos el hueco de la rejilla. */
+@media (min-width: 50rem) {
+  .topbar {
+    display: grid;
+    grid-template-columns: calc(var(--sl-sidebar-width) - var(--s-4)) minmax(0, 1fr) auto;
+    column-gap: var(--s-4);
+  }
+
+  .topbar__search {
+    justify-content: start;
+  }
+}
+
 .topbar__actions {
   gap: var(--s-2);
   align-items: center;
@@ -245,6 +261,26 @@
   box-shadow: 0 14px 26px -12px rgb(255 153 0 / 0.8);
 }
 
+/* Bloqueado: sin relieve, sin flecha y sin hover. El `<a>` va además sin
+   `href`, así que ni se pulsa ni entra en el recorrido del tabulador. */
+.btn--locked,
+.btn--locked:hover {
+  background: var(--surface-raised);
+  color: var(--ink-dim);
+  border-color: var(--line-strong);
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+.btn--locked .btn__arrow {
+  display: none;
+}
+
+.start__lock {
+  font-size: 0.9em;
+}
+
 .btn--ghost {
   background: var(--surface);
   color: var(--ink);
@@ -281,8 +317,8 @@ body:has(.hero) .content-panel:first-of-type {
 body:has(.hero) .sl-container {
   /* Starlight lo declara como `max-inline-size`; se repite en las dos formas
      para no depender del orden en que resuelva la propiedad lógica. */
-  max-inline-size: 74rem;
-  max-width: 74rem;
+  max-inline-size: 78rem;
+  max-width: 78rem;
 }
 
 .hero {
@@ -320,8 +356,11 @@ body:has(.hero) .sl-container {
 
 .hero__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-  gap: var(--s-12);
+  /* La columna del billete se fija: con el cartel dentro, una fracción la
+     dejaba en 500 px y el billete pasaba de los 1000 px de alto, obligando al
+     texto a flotar en mitad de un hueco enorme. */
+  grid-template-columns: minmax(0, 1fr) 36rem;
+  gap: var(--s-10);
   align-items: center;
 }
 
@@ -399,8 +438,15 @@ body:has(.hero) .sl-container {
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: start;
   gap: var(--s-3);
   margin-top: var(--s-8);
+}
+
+.hero__hint {
+  margin: var(--s-3) 0 0;
+  font-size: var(--t-xs);
+  color: var(--ink-dim);
 }
 
 .hero__meta {
@@ -416,6 +462,7 @@ body:has(.hero) .sl-container {
 .ticket {
   --perf-inset: var(--s-6);
   position: relative;
+  display: grid;
   border: 1px solid var(--line);
   border-radius: var(--r-xl);
   background: var(--surface);
@@ -434,6 +481,8 @@ body:has(.hero) .sl-container {
 
 .ticket__stub {
   padding: var(--s-8) var(--s-6) var(--s-6);
+  display: grid;
+  align-content: start;
 }
 
 .ticket__kicker {
@@ -446,45 +495,39 @@ body:has(.hero) .sl-container {
   color: var(--ink-dim);
 }
 
-.ticket__date {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: var(--s-3);
-  align-items: center;
-  margin: var(--s-4) 0 0;
+/* El cartel oficial, como arte del talón. */
+.poster {
+  margin: 0;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  /* El cartel trae su propio fondo lavanda; el filete lo separa del billete
+     sin competir con sus colores. */
+  border: 1px solid var(--line);
+  background: var(--surface-sunken);
 }
 
-.ticket__day {
-  grid-row: 1 / 3;
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 7vw, 4rem);
-  font-weight: 800;
-  line-height: 0.85;
-  letter-spacing: var(--track-tight);
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
+/* Dos correcciones, las dos por la misma franja oscura sobre el cartel:
+
+   1. `<picture>` es inline, y su caja añadía el hueco del descendente.
+   2. Starlight separa con `margin-top: 1rem` todo elemento que siga a otro
+      dentro de `.sl-markdown-content`. Dentro de `<picture>` el `<img>` va
+      detrás de los `<source>`, así que la regla le aplicaba margen; al no
+      tener el `<picture>` ni borde ni relleno, ese margen se colapsaba hacia
+      fuera y empujaba la imagen 16 px hacia abajo dejando el fondo a la vista. */
+.poster picture,
+.poster img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
 }
 
-.ticket__weekday {
-  align-self: end;
-  font-family: var(--font-display);
-  font-size: var(--t-md);
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.ticket__month {
-  align-self: start;
+.ticket__when {
+  margin: 0;
   font-size: var(--t-sm);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.ticket__time {
-  margin: var(--s-3) 0 0;
-  font-size: var(--t-sm);
-  color: var(--ink-muted);
+  font-weight: 600;
+  color: var(--ink-body);
+  text-wrap: pretty;
 }
 
 /* El troquelado. Los dos círculos se recortan contra el borde redondeado del
@@ -519,7 +562,8 @@ body:has(.hero) .sl-container {
 
 .ticket__body {
   display: grid;
-  gap: var(--s-5);
+  align-content: start;
+  gap: var(--s-4);
   padding: var(--s-6);
 }
 
@@ -562,13 +606,65 @@ a.ticket__value:hover {
 .ticket__countdown {
   display: grid;
   gap: var(--s-2);
-  padding-top: var(--s-5);
+  padding: var(--s-5) var(--s-6) var(--s-6);
   border-top: 1px solid var(--line);
+  /* Referencia para la consulta de contenedor de la cuenta atrás. */
+  container-type: inline-size;
 }
 
 .ticket__countdown .countdown {
   margin-top: 0;
   max-width: none;
+}
+
+/* --- En escritorio, el billete se tumba ----------------------------------
+   Apilado medía más de 900 px de alto: el titular quedaba flotando en mitad
+   de un hueco y el hero no cabía en pantalla. Con el talón al lado y el
+   troquelado en vertical mide unos 420 px, que es la altura del texto de la
+   izquierda. La cuenta atrás cruza el ancho completo porque dentro de media
+   columna sus cuatro casillas no respiran. */
+@media (min-width: 62rem) {
+  .ticket {
+    grid-template-columns: minmax(0, 1.05fr) 1px minmax(0, 0.95fr);
+  }
+
+  .ticket__countdown {
+    grid-column: 1 / -1;
+  }
+
+  .ticket__stub {
+    padding: var(--s-6);
+    padding-block-start: calc(var(--s-6) + var(--rail));
+  }
+
+  .ticket__body {
+    padding-block-start: calc(var(--s-6) + var(--rail));
+  }
+
+  /* El troquelado pasa de línea horizontal a línea vertical, y las muescas
+     de los lados a las esquinas de arriba y abajo. */
+  .ticket__perf {
+    height: auto;
+    margin-inline: 0;
+    margin-block: var(--perf-inset);
+    border-top: 0;
+    border-inline-start: 1px dashed var(--line-strong);
+  }
+
+  .ticket__perf::before,
+  .ticket__perf::after {
+    inset-inline: -0.5625rem auto;
+    transform: none;
+  }
+
+  .ticket__perf::before {
+    top: calc(var(--perf-inset) * -1 - 0.5625rem);
+  }
+
+  .ticket__perf::after {
+    top: auto;
+    bottom: calc(var(--perf-inset) * -1 - 0.5625rem);
+  }
 }
 
 /* =========================================================================
@@ -618,9 +714,15 @@ a.ticket__value:hover {
   display: none;
 }
 
-/* En estrecho se muestra la abreviatura. El nombre completo sigue en el DOM
-   para quien use lector de pantalla; la abreviatura va con aria-hidden. */
-@media (max-width: 32rem) {
+/* Cuando la caja se estrecha se muestra la abreviatura. El nombre completo
+   sigue en el DOM para quien use lector de pantalla; la abreviatura va con
+   aria-hidden.
+
+   Es una consulta de contenedor, no de viewport: lo que decide si "SEGUNDOS"
+   cabe es el ancho del billete, no el de la pantalla. Con la consulta de
+   viewport la palabra se salía en escritorio, porque el billete es estrecho
+   aunque la ventana sea ancha. */
+@container (max-width: 25rem) {
   .countdown__long {
     position: absolute;
     width: 1px;
@@ -744,19 +846,32 @@ a.ticket__value:hover {
 /* =========================================================================
    Panel de track
    ========================================================================= */
-.panel {
-  position: relative;
+.tracks {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: var(--s-8);
-  padding: var(--s-8);
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: var(--s-5);
+}
+
+.track {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: var(--s-3);
+  padding: var(--s-8) var(--s-6) var(--s-6);
   border: 1px solid var(--line);
   border-radius: var(--r-xl);
   background: var(--surface);
   overflow: hidden;
+  transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
 
-.panel::before {
+.track:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+}
+
+.track::before {
   content: "";
   position: absolute;
   inset: 0 0 auto 0;
@@ -764,21 +879,7 @@ a.ticket__value:hover {
   background: var(--track-accent, var(--pride-h));
 }
 
-@media (max-width: 56rem) {
-  .panel {
-    grid-template-columns: minmax(0, 1fr);
-    padding: var(--s-6);
-  }
-}
-
-.panel__main {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  gap: var(--s-4);
-}
-
-.panel__kicker {
+.track__kicker {
   display: inline-flex;
   align-items: center;
   gap: var(--s-2);
@@ -791,7 +892,7 @@ a.ticket__value:hover {
   color: var(--ink-dim);
 }
 
-.panel__title {
+.track__title {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--t-xl);
@@ -800,34 +901,31 @@ a.ticket__value:hover {
   color: var(--ink);
 }
 
-.panel__summary {
+.track__summary {
   margin: 0;
   color: var(--ink-muted);
   font-size: var(--t-sm);
   max-width: 48ch;
 }
 
-.panel__services {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s-2);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.panel__cta {
+/* `margin-top: auto` deja el botón pegado al fondo: las dos tarjetas miden lo
+   mismo aunque un resumen sea más largo, y el botón no queda flotando a media
+   altura de la más alta. */
+.track__cta {
   margin-top: auto;
+  padding-top: var(--s-3);
 }
 
-.panel__aside {
-  padding: var(--s-5);
+/* --- Arquitectura común -------------------------------------------------- */
+.arch {
+  margin-top: var(--s-6);
+  padding: var(--s-6);
   border: 1px solid var(--line);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-xl);
   background: var(--bg-subtle);
 }
 
-.panel__aside-title {
+.arch__title {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--t-xs);
@@ -837,12 +935,24 @@ a.ticket__value:hover {
   color: var(--ink-dim);
 }
 
+.arch__note {
+  margin: var(--s-5) 0 0;
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line);
+  font-size: var(--t-xs);
+  color: var(--ink-dim);
+  /* El filete separa el bloque entero, así que tiene que cruzarlo: sin esto
+     hereda la medida de lectura de los párrafos y se queda a media caja. */
+  max-width: none;
+}
+
 /* =========================================================================
    Flujo de arquitectura
    ========================================================================= */
+/* En estrecho: los nodos se apilan y la línea que los une es vertical. */
 .flow {
   display: grid;
-  margin: var(--s-4) 0 0;
+  margin: var(--s-5) 0 0;
   padding: 0;
   list-style: none;
 }
@@ -860,7 +970,6 @@ a.ticket__value:hover {
   padding-bottom: 0;
 }
 
-/* La línea que une los nodos: el dato va de arriba abajo. */
 .flow__node:not(:last-child)::after {
   content: "";
   position: absolute;
@@ -911,14 +1020,41 @@ a.ticket__value:hover {
   font-weight: 600;
   letter-spacing: var(--track-wide);
   text-transform: uppercase;
-  color: var(--flow-accent, var(--ink-muted));
+  color: var(--ink-muted);
 }
 
-.flow__via {
-  grid-column: 2;
-  margin-top: 0.2rem;
-  font-size: var(--t-xs);
-  color: var(--ink-dim);
+/* En ancho: cuatro columnas y la línea en horizontal, que es como se lee un
+   camino. El número sube a su propia fila para que la línea pase por ellos. */
+@media (min-width: 52rem) {
+  .flow {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--s-5);
+  }
+
+  .flow__node {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.25rem;
+    padding-bottom: 0;
+  }
+
+  .flow__node:not(:last-child)::after {
+    inset-inline: 1.875rem calc(var(--s-5) * -1);
+    top: 0.6875rem;
+    bottom: auto;
+    width: auto;
+    height: 1px;
+  }
+
+  .flow__index {
+    grid-row: auto;
+    margin-bottom: var(--s-2);
+  }
+
+  .flow__service,
+  .flow__what,
+  .flow__role {
+    grid-column: 1;
+  }
 }
 
 /* =========================================================================
@@ -1328,6 +1464,55 @@ a.ticket__value:hover {
   margin-bottom: 0;
 }
 
+/* --- Avisos nativos de Starlight ----------------------------------------
+   Los que se escriben con `:::note`. Se alinean con el componente `Note` para
+   que la sintaxis de Markdown y la de componente den el mismo resultado: si no,
+   quien redacte tiene que acordarse de cuál usar para que "quede bien". */
+.starlight-aside {
+  --note-accent: var(--c-blue);
+  margin: var(--s-5) 0;
+  padding: var(--s-4) var(--s-5);
+  border: 1px solid var(--line);
+  border-inline-start: var(--rail) solid var(--note-accent);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--ink-body);
+  font-size: var(--t-sm);
+}
+
+.starlight-aside--tip {
+  --note-accent: var(--c-purple);
+}
+
+.starlight-aside--caution {
+  --note-accent: var(--c-orange);
+}
+
+.starlight-aside--danger {
+  --note-accent: var(--c-red);
+}
+
+.starlight-aside__title {
+  font-family: var(--font-display);
+  font-size: var(--t-sm);
+  font-weight: 700;
+  color: var(--ink);
+  gap: var(--s-2);
+}
+
+.starlight-aside__icon {
+  color: var(--note-accent);
+  font-size: 1.1rem;
+}
+
+.starlight-aside__content {
+  color: var(--ink-muted);
+}
+
+.starlight-aside__content a {
+  color: var(--action);
+}
+
 /* =========================================================================
    Lista de entregables
    ========================================================================= */
@@ -1419,40 +1604,22 @@ a.ticket__value:hover {
   flex: none;
 }
 
-.brand__text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.15;
-  min-width: 0;
-}
-
 .brand__name {
   font-family: var(--font-display);
-  font-size: var(--t-sm);
+  font-size: var(--t-base);
   font-weight: 800;
   letter-spacing: var(--track-snug);
   color: var(--ink);
   white-space: nowrap;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.brand__sub {
-  font-size: 0.6875rem;
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  white-space: nowrap;
-}
-
-/* La marca se reduce en dos pasos, no en uno: primero cae el subtítulo, y solo
-   en pantallas muy estrechas queda el símbolo suelto. */
-@media (max-width: 34rem) {
-  .brand__sub {
-    display: none;
-  }
-}
-
+/* En pantallas muy estrechas la barra necesita el sitio para el buscador y el
+   menú: queda el símbolo, que ya es reconocible. */
 @media (max-width: 26rem) {
-  .brand__text {
+  .brand__name {
     display: none;
   }
 }

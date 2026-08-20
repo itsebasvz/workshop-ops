@@ -7,11 +7,12 @@
  * plantilla; darle un eje y un peso distinto a cada lado es lo que la hace
  * parecer diseñada.
  */
-import { EVENT } from "../config/event";
+import { EVENT, workshopOpen } from "../config/event";
 import Ticket from "./Ticket.astro";
+import StartButton from "./StartButton.astro";
 ---
 
-<header class="hero">
+<header class="hero not-content">
   <div class="hero__grid">
     <div class="hero__copy">
       <p class="hero__eyebrow">
@@ -31,14 +32,15 @@ import Ticket from "./Ticket.astro";
       </p>
 
       <div class="hero__actions">
-        <a class="btn btn--primary" href="/empezar/bienvenida">
-          Empezar el workshop
-          <span class="btn__arrow" aria-hidden="true">→</span>
-        </a>
+        <StartButton />
         <a class="btn btn--ghost" href={EVENT.registrationUrl}>
           Página del evento
         </a>
       </div>
+
+      <p class="hero__hint" data-start-hint hidden={workshopOpen()}>
+        La guía se abre el {EVENT.dateLabel} · {EVENT.timeLabel}
+      </p>
 
       <p class="hero__meta">
         Organiza {EVENT.organizers[0]} con {EVENT.organizers.length - 1} capítulos

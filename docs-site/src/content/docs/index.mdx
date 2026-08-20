@@ -13,11 +13,12 @@ head:
 
 import Hero from "../../components/Hero.astro";
 import Stats from "../../components/Stats.astro";
-import TrackPanel from "../../components/TrackPanel.astro";
+import TrackCard from "../../components/TrackCard.astro";
+import Flow from "../../components/Flow.astro";
 import Phases from "../../components/Phases.astro";
 import Note from "../../components/Note.astro";
 import Reveal from "../../components/Reveal.astro";
-import { activeTracks } from "../../config/tracks";
+import { announcedTracks } from "../../config/tracks";
 import { EVENT, ROLES } from "../../config/event";
 
 <Hero />
@@ -25,15 +26,21 @@ import { EVENT, ROLES } from "../../config/event";
 <Stats />
 
 <section class="section" data-reveal>
-  <p class="section__kicker">01 · El proyecto</p>
-  <h2 class="section__title">Qué vas a construir</h2>
+  <p class="section__kicker">01 · Los tracks</p>
+  <h2 class="section__title">Elige tu track</h2>
   <p class="section__lead">
-    No es un ejemplo de juguete. Es una aplicación con frontend, API, base de
-    datos y búsqueda en lenguaje natural, desplegada en tu propia cuenta de AWS
-    con infraestructura como código.
+    Ninguno es un ejemplo de juguete: los dos son aplicaciones con frontend,
+    API y base de datos, desplegadas en tu propia cuenta de AWS con
+    infraestructura como código. Se construyen con los mismos servicios, así
+    que lo que aprendas sirve para los dos. Cualquier persona puede elegir
+    cualquiera.
   </p>
 
-  {activeTracks().map((track) => <TrackPanel track={track} />)}
+  <div class="tracks not-content">
+    {announcedTracks().map((track) => <TrackCard track={track} />)}
+  </div>
+
+  <Flow />
 </section>
 
 <section class="section" data-reveal>
@@ -57,7 +64,7 @@ import { EVENT, ROLES } from "../../config/event";
     al lado todo el tiempo.
   </p>
 
-  <ol class="roles">
+  <ol class="roles not-content">
     {ROLES.map((role, index) => (
       <li class="role">
         <span class="role__n" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
@@ -80,13 +87,13 @@ import { EVENT, ROLES } from "../../config/event";
     Todo lo de esta lista es tuyo y lo puedes enseñar en una entrevista.
   </p>
 
-  <ul class="deliverables">
+  <ul class="deliverables not-content">
     {EVENT.deliverables.map((item) => <li>{item}</li>)}
   </ul>
 </section>
 
 <section class="section" data-reveal>
-  <div class="cta">
+  <div class="cta not-content">
     <div class="cta__copy">
       <p class="section__kicker">05 · Antes de venir</p>
       <h2 class="section__title">Solo necesitas tres cosas</h2>

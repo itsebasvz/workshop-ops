@@ -1,0 +1,64 @@
+---
+/**
+ * Botón de entrada al taller.
+ *
+ * La guía no se abre hasta la hora de inicio: el material se sigue en directo y
+ * abrirlo antes desordena la sesión. Mientras tanto el botón está bloqueado y
+ * no es enlace —sin `href` no se puede pulsar ni recibe foco al tabular, que es
+ * lo que de verdad significa "deshabilitado"—.
+ *
+ * El aviso de cuándo se abre no vive aquí sino debajo de la fila de botones:
+ * dentro, su ancho separaba los dos botones media pantalla.
+ *
+ * El estado se decide dos veces:
+ *
+ * 1. En el build, para que quien llegue sin JavaScript vea algo coherente.
+ * 2. En el navegador, porque la página es estática y puede servirse desde caché
+ *    días después de compilarse. El script corrige el estado al cargar y, si la
+ *    apertura cae dentro del margen de `setTimeout`, la programa: quien tenga la
+ *    portada abierta a las 16:00 ve cómo se desbloquea sin recargar.
+ */
+import { EVENT, workshopOpen } from "../config/event";
+
+const HREF = "/empezar/bienvenida";
+const open = workshopOpen();
+---
+
+<a
+  class:list={["btn", "btn--primary", { "btn--locked": !open }]}
+  href={open ? HREF : undefined}
+  aria-disabled={open ? undefined : "true"}
+  data-start
+  data-href={HREF}
+  data-opens-at={EVENT.startsAt}
+>
+  <span class="start__lock" aria-hidden="true" hidden={open}>🔒</span>
+  Empezar el workshop
+  <span class="btn__arrow" aria-hidden="true">→</span>
+</a>
+
+<script>
+  const link = document.querySelector<HTMLAnchorElement>("[data-start]");
+  const hint = document.querySelector<HTMLElement>("[data-start-hint]");
+  const lock = link?.querySelector<HTMLElement>(".start__lock");
+  const opensAt = Date.parse(link?.dataset.opensAt ?? "");
+
+  if (link && !Number.isNaN(opensAt)) {
+    const unlock = () => {
+      link.href = link.dataset.href ?? "/";
+      link.removeAttribute("aria-disabled");
+      link.classList.remove("btn--locked");
+      if (lock) lock.hidden = true;
+      if (hint) hint.hidden = true;
+    };
+
+    const left = opensAt - Date.now();
+
+    if (left <= 0) {
+      unlock();
+    } else if (left < 2 ** 31 - 1) {
+      // Por encima de ~24.8 días `setTimeout` desborda y dispara al instante.
+      setTimeout(unlock, left);
+    }
+  }
+</script>

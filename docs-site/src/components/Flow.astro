@@ -1,36 +1,34 @@
 ---
 /**
- * La arquitectura como flujo.
+ * La arquitectura como flujo, compartida por los dos tracks.
  *
  * Cada nodo dice el servicio, qué hace y qué rol del equipo lo trabaja. Esa
  * tercera columna es la que convierte un diagrama en un reparto de tareas: se
  * ve de un vistazo qué toca en cada asiento.
+ *
+ * En pantalla ancha se despliega en horizontal, que es como se lee un camino;
+ * en estrecho se apila y la línea de unión pasa a vertical.
  */
-import type { Track } from "../config/tracks";
-
-interface Props {
-  track: Track;
-}
-
-const { track } = Astro.props;
+import { STACK, STACK_NOTE } from "../config/tracks";
 ---
 
-<ol class="flow" style={`--flow-accent: var(--track-${track.accent}-ink)`}>
-  {
-    track.stack.map((node, index) => (
-      <li class="flow__node">
-        <span class="flow__index" aria-hidden="true">
-          {index + 1}
-        </span>
-        <span class="flow__service">{node.service}</span>
-        <span class="flow__what">{node.what}</span>
-        <span class="flow__role">{node.role}</span>
-        {node.via && (
-          <span class="flow__via">
-            + llama a <strong>{node.via}</strong>
+<div class="arch not-content">
+  <p class="arch__title">El camino de una petición</p>
+
+  <ol class="flow">
+    {
+      STACK.map((node, index) => (
+        <li class="flow__node">
+          <span class="flow__index" aria-hidden="true">
+            {index + 1}
           </span>
-        )}
-      </li>
-    ))
-  }
-</ol>
+          <span class="flow__service">{node.service}</span>
+          <span class="flow__what">{node.what}</span>
+          <span class="flow__role">{node.role}</span>
+        </li>
+      ))
+    }
+  </ol>
+
+  <p class="arch__note">{STACK_NOTE}</p>
+</div>
