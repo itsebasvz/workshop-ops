@@ -2,6 +2,42 @@
 
 Cada punto lleva la evidencia o la documentación que lo respalda. Fecha: **2026-08-18**.
 
+## 11. SafeSpace pasa de mapa de lugares a directorio de recursos
+
+La promesa pública del track habla de organizaciones, apoyo psicológico y legal, refugios y centros
+comunitarios. El seed anterior tenía 18 lugares, pero 13 eran `community_draft` y todos los registros
+exigían coordenadas. Eso no podía representar líneas de atención, canalizaciones o refugios protegidos.
+
+Decisión implementada:
+
+- `resource` es la entidad principal; `latitude` y `longitude` son opcionales.
+- `/resources` es la ruta canónica. El alias `/places` existió unas horas y se retiró: el único
+  cliente vive en este repo y ya estaba migrado, así que solo servía para duplicar la respuesta.
+- Los recursos aprobados requieren `provenance.type = direct_source`, `sourceUrl` y `checkedAt`.
+- El formulario guarda propuestas como `publicationStatus = pending`; `GET` solo devuelve `approved`.
+- Un `shelter_referral` no puede guardar dirección ni coordenadas.
+- La semilla reemplaza el catálogo de ocio por recursos con fuentes directas de instituciones y
+  organizaciones. Las dos Clínicas Especializadas Condesa sobreviven como recursos verificables;
+  los demás lugares anteriores salen del núcleo.
+
+La decisión conserva S3, API Gateway, Lambda, DynamoDB, Bedrock y Amazon Location para no convertir
+el cambio de producto en una arquitectura nueva. El mapa queda como vista parcial del directorio:
+solo dibuja recursos cuya ubicación pública es apropiada.
+
+### 11.1 Una fuente que no se puede abrir no es una fuente
+
+Centro Cultural Border entró en la primera versión de la semilla como el único `community_center`.
+Su `sourceUrl` daba `curl: (60) certificate has expired`: el certificado de `border.com.mx` caducó
+el 20 de octubre de 2023, así que ningún navegador actual abre la página sin un aviso de sitio no
+seguro. La ficha declaraba `checkedAt: 2026-08-19`, una fecha que nadie pudo haber comprobado.
+
+Lo sustituye el **Centro Cultural de la Diversidad** (Colima 261, Roma Norte), tomado de su ficha en
+el Sistema de Información Cultural de la Secretaría de Cultura. La coordenada sale de la propia
+ficha, no de un geocodificador: en un directorio con procedencia visible, la ubicación debe venir de
+la misma fuente que el resto del registro.
+
+**Comprobar que la fuente responde es parte de revisarla.** Las diez URLs del seed devuelven 200.
+
 ---
 
 ## 1. La API key de Amazon Location solo acepta comodines de servicio
@@ -154,13 +190,16 @@ ruido, pero es exactamente el tipo de mensaje que hace que alguien principiante 
 
 ## 10. El emparejamiento ordena por coincidencias en vez de exigirlas todas
 
-Si la búsqueda exigiera **todas** las señales detectadas, la consulta estrella del workshop
-(«café tranquilo con baño neutral para una cita») podría devolver lista vacía según cómo quede el
-seed — el peor resultado posible en una demo.
+Si la búsqueda exigiera **todos** los criterios detectados, la consulta estrella del workshop
+(«necesito apoyo psicológico trans y gratuito») podría devolver lista vacía según cómo quede el
+seed — el peor resultado posible en una demo, y peor todavía en un directorio de apoyo real.
 
-`applyFilters()` filtra por categoría, exige al menos una señal coincidente y **ordena por cuántas
-cumple**, mostrando «coincide en N de M». Nunca hay lista vacía por pedir una señal de más, y la
-lógica sigue siendo trivial de explicar.
+`applyFilters()` filtra por categoría, exige al menos un servicio o señal coincidente y **ordena por
+cuántos cumple**, mostrando «coincide en N de M». Nunca hay lista vacía por pedir un filtro de más,
+y la lógica sigue siendo trivial de explicar.
+
+> Redactado con la taxonomía de ocio original; el ejemplo se actualizó al pasar a recursos (§11).
+> El razonamiento no cambió.
 
 ---
 

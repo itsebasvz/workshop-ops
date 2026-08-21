@@ -1,34 +1,36 @@
-# 🧪 Safe Space — runbook del ensayo
+# 🌈 Safe Space — runbook de facilitación
 
-**Cómo ejecutar el workshop exactamente como lo hará una participante, y qué debes ver en cada paso.**
+Este documento describe el ensayo del track SafeSpace Network desde la perspectiva de quien
+facilita. La app es un **directorio de recursos inclusivos con mapa opcional**, no un mapa de lugares
+de ocio ni una certificación de seguridad.
 
-Este documento vive **fuera** del repo que clonan las participantes. Es para el equipo.
+- Repo: `awspectrum-safe-space/`
+- Región: `us-east-1`
+- Stack: `safe-space`
+- Cuenta de referencia del ensayo: `180670196186`
 
-- Repo del ensayo: `awspectrum-safe-space/`
-- Cuenta usada en la validación: `180670196186` · región `us-east-1`
-- Fecha del ensayo: **2026-08-18**
-- Resultado: ✅ ciclo completo verificado dos veces desde cero
+## Objetivo pedagógico
 
----
+La pregunta que debe volver en cada módulo es:
 
-## Tiempos reales medidos
+> ¿Cómo hacemos útil un recurso sin confundir una fuente con una garantía de seguridad y sin revelar
+> una ubicación que debe permanecer privada?
 
-| Paso | Tiempo | Bloque del Notion |
-| --- | ---: | --- |
-| `./scripts/preflight.sh` | 9 s | — |
-| `sam build` | 3 s | 15 min · CloudShell + SAM |
-| `sam deploy` (creación en frío) | **70 s** | 15 min · CloudShell + SAM |
-| `./scripts/publish-frontend.sh` | 13 s | 15 min · primer resultado visual |
-| `python3 scripts/seed.py` | 2 s | 15 min · datos con significado |
-| **Total de cero a app funcionando** | **97 s** | |
-| `sam sync --code` (por función) | ~2 s | 20 min · experimentación |
-| `./scripts/cleanup.sh` | ~40 s | 15 min · demo + cleanup |
+El ciclo es **predecir → ejecutar → observar → explicar → modificar**.
 
-> **Gate C del Notion superado con margen enorme.** El camino crítico técnico cabe en menos de 2
-> minutos de reloj; los 15 minutos del bloque quedan íntegros para explicar qué está pasando, que es
-> justamente el objetivo pedagógico.
+## Tiempo de máquina esperado
 
----
+| Acción | Tiempo esperado |
+| --- | ---: |
+| `preflight.sh` | ~10 s |
+| `sam build` | ~3 s |
+| `sam deploy` en frío | ~70 s |
+| `publish-frontend.sh` | ~13 s |
+| `seed.py` | ~2 s |
+| `sam sync --code` | ~2 s |
+| cleanup | ~40 s |
+
+La máquina ocupa poco tiempo; el aprendizaje está en mirar evidencia y explicar decisiones.
 
 ## Antes de empezar
 
@@ -36,14 +38,9 @@ Este documento vive **fuera** del repo que clonan las participantes. Es para el 
 cd awspectrum-safe-space
 ```
 
-Requisitos que asume el ensayo: AWS CloudShell en `us-east-1`, o un entorno local con AWS CLI, SAM
-CLI, `python3` y `boto3`.
-
-> ⚠️ **Si ensayas fuera de CloudShell** y `preflight.sh` te marca `boto3 no está instalado`, eso es
-> correcto: es el único bloqueo que puede aparecer en una máquina local. CloudShell trae `boto3`
-> preinstalado. Para el ensayo local: `pip3 install --user boto3`, o usa un entorno virtual.
-
----
+Comprueba AWS CloudShell, `us-east-1`, permisos para SAM, Bedrock, DynamoDB, S3, CloudWatch y
+Amazon Location. No desactives Block Public Access de la cuenta desde el workshop; `preflight.sh`
+solo informa si la configuración de la cuenta impediría el sitio de demostración.
 
 ## Paso 1 · Preflight
 
@@ -51,252 +48,143 @@ CLI, `python3` y `boto3`.
 ./scripts/preflight.sh
 ```
 
-**Debes ver:**
+**Checkpoint:** 0 bloqueos. Si Bedrock aparece como aviso, continúa: el fallback es parte del
+producto y de la lección.
 
-```
-🌈 Safe Space · preflight
-Región objetivo: us-east-1 · Stack: safe-space
-
-Herramientas
-  ✓ AWS CLI aws-cli/…
-  ✓ AWS SAM CLI …
-  ✓ Python …
-  ✓ boto3 disponible (lo necesita scripts/seed.py)
-
-Cuenta y región
-  ✓ Credenciales activas · cuenta …
-  ✓ Región us-east-1
-
-Servicios
-  ✓ Amazon Bedrock · amazon.nova-micro-v1:0 responde
-  ✓ Amazon Location accesible
-  ✓ S3 Block Public Access · sin bloqueo a nivel de cuenta
-
-Estado previo
-  ✓ No hay una stack 'safe-space' previa · deploy limpio
-
-✓ Todo listo. Continúa con: sam build && sam deploy
-```
-
-**Qué comprobar como facilitadora:**
-
-- El script **no modifica nada**. Si detecta Block Public Access a nivel de cuenta, lo reporta y
-  explica las opciones; no lo desactiva. Es intencional.
-- Si Bedrock falla, sale como **aviso**, no como bloqueo: el workshop continúa con el plan B.
-
----
-
-## Paso 2 · Build y deploy
+## Paso 2 · Deploy
 
 ```bash
 sam build && sam deploy
 ```
 
-**Debes ver:** `Build Succeeded`, luego la tabla de recursos y
-`Successfully created/updated stack - safe-space in us-east-1`.
-
-**Momento de enseñanza mientras aprovisiona (~70 s):** abre en la consola
-**CloudFormation → Stacks → safe-space → Resources**. Ahí se ve que SAM terminó creando una stack de
-CloudFormation, y que dentro viven la tabla, las Lambdas, el HTTP API, el bucket y la API key.
+Mientras espera, abrir CloudFormation → `safe-space` → **Resources**. Pedir a los equipos que
+predigan qué aparecerá: tabla, dos Lambdas, HTTP API, bucket, logs y API key.
 
 **Outputs esperados:** `ApiUrl`, `WebsiteUrl`, `WebsiteBucketName`, `PlacesTableName`,
-`MapsApiKeyName`, `AllowedSignals`, `AllowedCategories`.
+`MapsApiKeyName`, `AllowedSignals`, `AllowedCategories`, `AllowedServices`.
 
----
-
-## Paso 3 · Publicar el frontend
+## Paso 3 · Frontend
 
 ```bash
 ./scripts/publish-frontend.sh
 ```
 
-**Debes ver:**
+**Checkpoint:** la URL abre el mapa de CDMX y el directorio aún no tiene datos. Explicar que
+`config.js` se genera porque contiene la API key de Location y está en `.gitignore`.
 
-```
-  ✓ Outputs leídos de la stack safe-space
-  ✓ API key de Amazon Location obtenida (safe-space-maps-key)
-  ✓ frontend/config.js generado
-  ✓ Frontend sincronizado con s3://safe-space-web-<cuenta>
-
-Abre tu Safe Space:
-  http://safe-space-web-<cuenta>.s3-website-us-east-1.amazonaws.com
-```
-
-**Momento de enseñanza:** abre `frontend/config.js`. Explica por qué existe este script: CloudFormation
-crea la API key de Location pero **no devuelve su valor** por `Fn::GetAtt` —solo el nombre y el ARN—,
-así que hay que pedírselo a la API con `aws location describe-key`. No es magia, son 3 pasos legibles.
-
-**Al abrir la URL debes ver:** el mapa oscuro de CDMX cargado, sin pines todavía (el seed va después).
-
----
-
-## Paso 4 · Cargar los datos
+## Paso 4 · Seed y modelo de datos
 
 ```bash
 python3 scripts/seed.py
 ```
 
-**Debes ver** los 18 nombres uno a uno y `✓ 18 lugares cargados`.
+**Checkpoint:** 11 recursos aprobados cargados; aproximadamente 7 tienen coordenadas y 4 son
+contact-only.
 
-**Momento de enseñanza:** abre `data/seed.json` y mira el bloque `provenance` de cualquier registro.
-Cada dato declara de dónde viene y cuándo se verificó. Luego abre
-**DynamoDB → Tablas → safe-space-places → Explorar elementos** para ver los mismos items en la tabla.
+Abrir `data/seed.json` y DynamoDB. Pedir que encuentren:
 
-Recarga el sitio: ahora hay 18 pines.
+- `services` frente a `signals`;
+- `contact` y `serviceArea`;
+- `provenance.sourceUrl` y `checkedAt`;
+- `publicationStatus: approved`.
 
----
+Comparar una ficha con pin y una derivación a refugio. La ausencia de coordenadas es intencional.
 
-## Paso 5 · Las tres rutas
+## Paso 5 · API
 
 ```bash
-API=$(aws cloudformation describe-stacks --stack-name safe-space \
+API=$(aws cloudformation describe-stacks --stack-name safe-space --region us-east-1 \
       --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" --output text)
+
+curl -s "$API/resources" | head -c 400
 ```
 
-### `GET /places`
+Propuesta válida:
 
 ```bash
-curl -s "$API/places" | head -c 300
+curl -s -X POST "$API/resources" -H 'content-type: application/json' \
+  -d '{"name":"Recurso de prueba","category":"support_service","services":["legal_support"],"contact":{"website":"https://example.org"},"sourceUrl":"https://example.org"}'
 ```
-Esperado: `{"places": [...], "count": 18}`
 
-### `POST /search` — con IA
+**Esperado:** `202`, `publicationStatus: pending`; después de `GET /resources`, no aparece.
+
+Propuesta insegura:
+
+```bash
+curl -s -X POST "$API/resources" -H 'content-type: application/json' \
+  -d '{"name":"Refugio de prueba","category":"shelter_referral","services":["shelter_support"],"latitude":19.42,"longitude":-99.15,"contact":{"phone":"5555555555"}}'
+```
+
+**Esperado:** `400`. La API defiende la privacidad incluso si el navegador se modifica o se evita.
+
+## Paso 6 · Búsqueda e IA
 
 ```bash
 curl -s -X POST "$API/search" -H 'content-type: application/json' \
-  -d '{"query":"busco un café tranquilo para una cita con mi novia y me importa que tenga baño neutral"}'
-```
-Esperado:
-```json
-{"criteria": {"category": "cafe", "signals": ["neutral_bathroom", "quiet"]}, "source": "bedrock"}
+  -d '{"query":"necesito apoyo psicológico para una persona trans y una línea de orientación"}'
 ```
 
-### `POST /places` — válido y rechazado
+**Checkpoint:** `criteria` contiene `category`, `services`, `signals` y `source`.
+
+La conversación debe insistir en que Bedrock no ve DynamoDB, no inventa organizaciones y no decide
+qué se muestra.
+
+### Rescue path: fallback
+
+Romper temporalmente `BEDROCK_MODEL_ID` en la Lambda `safe-space-search`, conservando las demás
+variables, y repetir la búsqueda. Debe responder `HTTP 200` con `source: fallback`. Restaurar con:
 
 ```bash
-# válido → 201
-curl -s -X POST "$API/places" -H 'content-type: application/json' \
-  -d '{"name":"Café de prueba","category":"cafe","latitude":19.4155,"longitude":-99.1605,"signals":["quiet"]}'
-
-# inválido → 400 con la lista de errores
-curl -s -X POST "$API/places" -H 'content-type: application/json' \
-  -d '{"name":"","category":"nave_espacial","latitude":999,"longitude":"x","signals":["hackeame"]}'
+sam deploy
 ```
 
-El segundo debe devolver **400** y **no escribir nada** en la tabla. Es el mejor momento para explicar
-por qué una API pública nunca confía en su entrada.
+No ocultar el fallback: es una decisión de continuidad del negocio.
 
----
+## Paso 7 · Reto único
 
-## Paso 6 · Verificar el plan B de la IA
+El equipo añade una ficha de contacto sin ubicación pública. Debe pasar por la fuente directa,
+validación, seed y frontend. La evidencia de cierre es:
 
-Vale la pena ensayarlo al menos una vez antes del evento, porque es el rescue path del módulo de IA.
+1. ficha visible en la lista;
+2. cero pin nuevo;
+3. fuente y canal visibles;
+4. explicación de por qué no se guardaron coordenadas;
+5. rama/PR solo si los permisos y repos por equipo ya están preparados.
 
-```bash
-# rompe Bedrock a propósito
-aws lambda update-function-configuration --function-name safe-space-search \
-  --environment 'Variables={BEDROCK_MODEL_ID=amazon.modelo-que-no-existe-v1:0,ALLOWED_SIGNALS=lgbtq_space\,neutral_bathroom\,accessible\,pronouns_respected\,couples_friendly\,quiet\,inclusive_healthcare,ALLOWED_CATEGORIES=cafe\,restaurant\,bar\,bookstore\,clinic\,community_center\,museum\,park\,coworking\,shop}' \
-  --region us-east-1 >/dev/null
-aws lambda wait function-updated-v2 --function-name safe-space-search --region us-east-1
+## Paso 8 · Observabilidad
 
-curl -s -X POST "$API/search" -H 'content-type: application/json' \
-  -d '{"query":"café tranquilo con baño neutral"}'
+```text
+/aws/lambda/safe-space-places
+/aws/lambda/safe-space-search
 ```
 
-**Esperado:** `HTTP 200` con los **mismos criterios** y `"source": "fallback"`. La aplicación no se
-cae. Restaura poniendo de vuelta `amazon.nova-micro-v1:0` con el mismo comando.
+Cada equipo debe encontrar una petición propia y relacionar `routeKey`, `source`, `criteria` y el
+ID del recurso. No preguntar “¿todo bien?”: pedir una evidencia concreta.
 
----
-
-## Paso 7 · Experimentar (`sam sync --code`)
-
-```bash
-# edita functions/search/app.py — por ejemplo el SYSTEM_PROMPT
-sam sync --code
-```
-
-Pedirá confirmar que es una stack de desarrollo: **responde `Y`**. Avisa porque `sync` provoca drift
-respecto a CloudFormation; en producción no se hace. Tarda ~2 s por función.
-
-**Ejercicio recomendado para las participantes:** añadir una señal en `AllowedSignals` de
-`template.yaml` y hacer `sam deploy`. Los filtros y el formulario aparecen solos, porque la taxonomía
-tiene una única fuente de verdad. Es el ejercicio que mejor demuestra la arquitectura.
-
----
-
-## Paso 8 · Limpieza
+## Paso 9 · Cierre y cleanup
 
 ```bash
 ./scripts/cleanup.sh
 ```
 
-Pide escribir `borrar` para confirmar. Después, verifica que no queda nada:
+Antes de confirmar, leer qué se va a borrar. Después comprobar que la stack no existe. En una cuenta
+compartida o en la demo de organizadores, detenerse y pedir autorización antes de ejecutar cleanup.
 
-```bash
-aws cloudformation describe-stacks --stack-name safe-space --region us-east-1     # debe fallar
-aws s3 ls s3://safe-space-web-<cuenta>                                            # debe fallar
-aws dynamodb describe-table --table-name safe-space-places --region us-east-1     # debe fallar
-aws location list-keys --region us-east-1 --query 'Entries[].KeyName'            # sin safe-space
-aws logs describe-log-groups --log-group-name-prefix /aws/lambda/safe-space \
-    --region us-east-1 --query 'logGroups[].logGroupName'                        # vacío
-```
+## Estado de la demo desplegada
 
-En el ensayo del 2026-08-18 los seis quedaron limpios. Los log groups solo desaparecen porque están
-**declarados en `template.yaml`**; los que Lambda crea por su cuenta sobreviven a `sam delete`.
+La stack de referencia puede contener el prototipo anterior. No mezclar sus 18 registros con el
+contrato nuevo. Para una migración controlada:
 
----
+1. exportar los registros actuales;
+2. desplegar backend y frontend compatibles;
+3. ejecutar `python3 scripts/seed.py --replace` solo con autorización explícita;
+4. publicar el frontend;
+5. probar `/resources`, una ficha contact-only y una propuesta `pending`.
 
-## Verificación en navegador
+## Gates que siguen abiertos
 
-El sitio desplegado se condujo con Playwright sobre Chromium (1440×900 y 420×900). Resultado:
-
-| Comprobación | Resultado |
-| --- | --- |
-| Mapa de Amazon Location, tema Dark | ✅ canvas renderizado |
-| Pines del seed | ✅ 18 |
-| Chips de filtro y categorías del formulario | ✅ 7 y 10, generados desde la stack |
-| Búsqueda con IA | ✅ «café tranquilo … baño neutral» → 3 de 18, 15 pines atenuados, etiqueta `BEDROCK` |
-| Alta válida | ✅ pin nuevo, diálogo cerrado, sin error |
-| Alta inválida | ✅ muestra el mensaje del servidor y el diálogo sigue abierto |
-| Popup con procedencia | ✅ |
-| Responsive a 420 px | ✅ sin desbordamiento horizontal |
-| Errores de consola | ✅ ninguno |
-
-Dos bugs salieron de aquí y están corregidos: el panel de error tapaba el mapa (`display` de autor
-anulando el atributo `hidden`), y `form.name` colisionaba con la propiedad del elemento `<form>`.
-Ninguno de los dos era detectable sin abrir un navegador.
-
----
-
-## Qué queda pendiente de verificar a mano
-
-Estas son las cosas que el ensayo **no** pudo cubrir:
-
-- [x] ~~**El ensayo dentro de AWS CloudShell.**~~ **Verificado el 2026-08-19** en `us-east-1`:
-      clonado, `preflight.sh`, `sam build`, `sam deploy`, `publish-frontend.sh`, `seed.py` y
-      `GET /places` funcionan sin instalar nada. **Gate A/C cerrado.**
-      Nota: en CloudShell **no hace falta crear un entorno virtual** — `boto3` ya está. Esa
-      instrucción del walkthrough aplica solo a la ruta local.
-- [ ] **El ensayo desde una cuenta AWS recién creada.** La validación se hizo en una cuenta con
-      historial.
-- [ ] **Gate F del Notion:** dárselo a alguien que no conozca el repo y medir dónde se atasca.
-- [ ] **Curaduría del seed.** Los 18 lugares tienen coordenadas reales de Amazon Location, pero las
-      señales de los marcados `community_draft` son un punto de partida, no información verificada.
-
----
-
-## Hallazgos del ensayo que cambiaron el diseño
-
-Ver `notes/decisions.md` para el detalle. En resumen:
-
-0. **La lista de lugares se cacheaba en el navegador.** `GET /places` no enviaba `Cache-Control`,
-   así que el navegador aplicaba cacheo heurístico (RFC 9111 §4.2.2) y reutilizaba la respuesta
-   vacía obtenida antes del seed: el mapa seguía sin pines hasta forzar el refresco. Afectaba a
-   **todas** las participantes, porque el recorrido manda abrir el sitio vacío en el bloque del
-   mapa y recargar en el de datos. Corregido con `Cache-Control: no-store`. Encontrado en el
-   ensayo en vivo del 2026-08-19, no en las pruebas automatizadas.
-1. **La API key de Amazon Location solo acepta comodines de servicio** (`geo-maps:*`, `geo-places:*`).
-   Las acciones concretas fallan con un error engañoso. Este fue el único bloqueo real del ensayo.
-2. **`CommaDelimitedList` rompe `sam build`** cuando se usa con `!Join` en Outputs.
-3. **Los log groups hay que declararlos** o el cleanup deja basura.
-4. **`sam sync --code` avisa de una capa inexistente** si no se pone `dependency_layer = false`.
+- ensayo desde una cuenta AWS recién creada;
+- acceso a AWS y permisos de GitHub por equipo;
+- operación de forks/repos y PRs;
+- revisión de la guía con una persona que no conozca el repo;
+- validación periódica de fuentes y horarios del seed.
