@@ -2,6 +2,61 @@
 
 Cada punto lleva la evidencia o la documentación que lo respalda. Fecha: **2026-08-18**.
 
+## 12. El entorno pasa de AWS CloudShell a GitHub Codespaces
+
+CloudShell funciona bien como terminal, pero su editor es demasiado pobre para el tramo del taller
+en el que cada equipo modifica el proyecto — que es justo el tramo que justifica el evento. El
+entorno oficial pasa a ser un fork + GitHub Codespaces con Dev Container, y CloudShell queda como
+**plan B** documentado, no eliminado.
+
+Qué resuelve:
+
+- La persona no instala nada: ni AWS CLI, ni SAM, ni Python, ni Git, ni Docker, ni VS Code.
+- El `git clone` desaparece: el Codespace ya contiene el código de su fork, y GitHub configura
+  `origin` (su fork) y `upstream` (el repo del taller) por sí solo.
+- Editar, buscar, hacer commit y push ocurren en la misma ventana donde se ejecuta `sam deploy`.
+
+**La autenticación es lo que más cambia.** En CloudShell las credenciales eran automáticas; en un
+Codespace no hay ninguna. El taller usa `aws login --remote --region us-east-1`: sesión temporal de
+12 horas, sin copiar access keys a la máquina de nadie. `--remote` existe porque el Codespace no
+tiene navegador propio, así que la CLI muestra una URL en vez de abrirla.
+
+Es además un momento pedagógico barato: **tener la AWS CLI instalada no es lo mismo que estar
+autenticada en AWS**.
+
+### 12.1 Los límites de `aws login`, que hay que conocer antes del evento
+
+| Identidad | Funciona | Qué hace falta |
+|---|---|---|
+| Usuario **root** | sí | nada |
+| **Usuario IAM** | sí | la policy gestionada `SignInLocalDevelopmentAccess` |
+| **IAM Identity Center** | **no** | ahí el comando es `aws sso login`, previa `aws configure sso` |
+
+`aws login` requiere **AWS CLI ≥ 2.32.0** (nov 2025). Por eso la versión va fijada en el Dockerfile
+y el propio build falla si la instalada es anterior: es preferible romper la construcción de la
+imagen, donde el error se lee entero, que descubrirlo a mitad del taller.
+
+### 12.2 Dos cosas que solo aparecieron al construir la imagen
+
+- La imagen base `mcr.microsoft.com/devcontainers/python:1-3.13-bookworm` trae un repositorio apt de
+  **yarn con la clave GPG caducada**. `apt-get update` aborta con «The repository is not signed» y
+  se lleva por delante el build entero. El Dockerfile retira esa lista antes de actualizar: el
+  taller no usa yarn, y el binario que la imagen incluye ni siquiera arranca porque no hay Node.
+- La comprobación de que `aws login` existe **no puede usar `aws login help`**: la ayuda de la CLI
+  v2 se renderiza con `groff`, que la imagen no trae. Se sondea con un flag inventado y se mira si
+  la CLI responde «Invalid choice» (el comando no existe) o «Unknown options» (existe).
+
+### 12.3 Lo que Codespaces no arregla
+
+Los *prebuilds* de Codespaces no sirven aquí: cada persona crea el Codespace sobre **su propio
+fork**, no sobre este repositorio, así que el build se ejecuta entero cada vez. De ahí que el
+Dockerfile vaya en una sola capa, sin `apt upgrade` y sin compilar nada desde fuente.
+
+Y la cuota es real: un Codespace encendido consume horas aunque nadie lo use. Por eso el cierre del
+taller es `cleanup.sh` → `aws logout` → **detener o eliminar el Codespace**.
+
+---
+
 ## 11. SafeSpace pasa de mapa de lugares a directorio de recursos
 
 La promesa pública del track habla de organizaciones, apoyo psicológico y legal, refugios y centros
@@ -96,9 +151,14 @@ Lambdas ya hacen `split(",")` y desaparece el `!Join`.
 
 ## 3. Cero dependencias en las Lambdas
 
-**Motivo:** CloudShell no garantiza la versión de Python, y `sam build` con un intérprete distinto al
-runtime produce `MisMatchRuntimeError`. CloudShell tampoco es un sitio cómodo para
+**Motivo:** `sam build` con un intérprete distinto al runtime produce `MisMatchRuntimeError`, y
+CloudShell no garantiza la versión de Python ni es un sitio cómodo para
 `sam build --use-container`.
+
+> Actualización (§12): el entorno oficial es ahora un Dev Container que fija Python 3.13, así que
+> el intérprete ya no es una incógnita. **La decisión sigue en pie por otro motivo:** sin
+> `requirements.txt` el builder solo copia código, el build tarda 3 s y no hay ninguna versión de
+> dependencia que pueda romperse el día del taller.
 
 Al no haber `requirements.txt`, el builder de SAM se limita a copiar el código: `sam build` en **3 s**
 y sin ninguna advertencia de versión. `boto3` y `botocore` los aporta el runtime gestionado

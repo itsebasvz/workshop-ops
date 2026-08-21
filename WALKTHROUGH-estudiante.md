@@ -10,20 +10,45 @@
 > revisión; una propuesta comunitaria queda pendiente. Los refugios se representan por contacto y
 > canalización, nunca por su dirección protegida.
 
-## Paso 0 · Abre AWS CloudShell
+## Paso 0 · Haz fork y crea tu Codespace
 
-Consola de AWS → selecciona **N. Virginia (us-east-1)** → abre CloudShell.
+Entra al repo, pulsa **Fork** y ve a **tu** copia. Ahí:
 
-CloudShell trae AWS CLI, SAM CLI, `python3`, `boto3` y `git` ya instalados.
+**Code ▸ Codespaces ▸ Create codespace on main**, máquina de **2 núcleos**.
 
-## Paso 1 · Clona el repo
+GitHub construye el entorno del taller y abre VS Code en el navegador. Cuando termine ya
+tienes AWS CLI, SAM CLI, `python3`, `boto3`, `git`, `gh` y `node` instalados. No hay nada que
+instalar en tu portátil.
+
+No hace falta clonar nada: el Codespace ya contiene el código de tu fork.
+
+> 🛟 **Si no puedes crear el Codespace** —sin cuota, GitHub caído, el entorno falla— pasa al
+> plan B: AWS CloudShell en `us-east-1`, `git clone` del repo, y sigue desde el Paso 2. Las
+> credenciales allí son automáticas, así que te saltas el Paso 1.
+
+## Paso 1 · Autentícate en AWS
+
+El Codespace tiene la AWS CLI, pero AWS todavía no sabe quién eres.
 
 ```bash
-git clone https://github.com/itsebasvz/awspectrum-safe-space.git
-cd awspectrum-safe-space
+aws login --remote --region us-east-1
 ```
 
-**Predice:** todavía no existe una stack ni una tabla. Todo lo que AWS creará está declarado en
+Se abre una URL; la abres en tu navegador, inicias sesión y pegas el código en la terminal.
+
+**Debes ver** tu identidad al comprobarla:
+
+```bash
+aws sts get-caller-identity
+```
+
+**Predice:** la sesión es temporal y dura 12 horas. En ningún momento copias una access key.
+
+> Si tu cuenta usa **IAM Identity Center**, el comando es `aws sso login` (previa
+> `aws configure sso`). Si eres un **usuario IAM** y te da error de permisos, necesitas la
+> policy `SignInLocalDevelopmentAccess`. Como **root** no necesitas nada más.
+
+Todavía no existe una stack ni una tabla. Todo lo que AWS creará está declarado en
 `template.yaml`.
 
 ## Paso 2 · Preflight
@@ -171,8 +196,18 @@ El cambio debe:
 5. aparecer en el directorio, pero no como pin;
 6. quedar explicado en el README y el pitch.
 
-Si la operación de GitHub está preparada, hazlo en una rama, abre el PR al final y pide revisión.
-Si no, conserva el cambio local y explica qué habría revisado el equipo.
+Edita desde VS Code, en el mismo Codespace: explorador de archivos, búsqueda en todo el repo,
+*Source Control* y terminal integrada. Trabajas sobre **tu fork**, así que puedes subir el
+cambio sin pedirle permiso a nadie:
+
+```bash
+git switch -c mi-rama
+git add . && git commit -m "describe tu cambio"
+git push -u origin mi-rama
+```
+
+`origin` es tu fork; `upstream` es el repo del taller. El pull request es opcional: lo que
+cuenta es que el equipo revise el cambio y sepas explicarlo.
 
 ## Paso 10 · Observa y limpia
 
@@ -194,6 +229,15 @@ Después:
 
 Comprueba en CloudFormation que `safe-space` ya no existe. Antes de ejecutar cleanup en una cuenta
 compartida, confirma que la stack no está siendo utilizada.
+
+Cierra después la sesión de AWS y el entorno:
+
+```bash
+aws logout
+```
+
+Y en [github.com/codespaces](https://github.com/codespaces), **detén o elimina tu Codespace**.
+Uno encendido sigue consumiendo tu cuota de horas aunque no lo uses.
 
 ## Checklist
 

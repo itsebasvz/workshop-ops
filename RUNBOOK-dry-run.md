@@ -32,15 +32,30 @@ El ciclo es **predecir → ejecutar → observar → explicar → modificar**.
 
 La máquina ocupa poco tiempo; el aprendizaje está en mirar evidencia y explicar decisiones.
 
+> ⚠️ **Estos tiempos se midieron en AWS CloudShell.** El entorno oficial es ahora GitHub
+> Codespaces y **están pendientes de remedir**. Falta además el dato que más importa el día
+> del evento: cuánto tarda en construirse el Dev Container de un Codespace de 2 núcleos.
+
 ## Antes de empezar
 
+El entorno del ensayo es **GitHub Codespaces**, igual que el de las participantes: fork del
+repo → **Code ▸ Codespaces ▸ Create codespace on main** (2 núcleos). El código ya está dentro;
+no hay `git clone`.
+
+Autentícate y comprueba la identidad antes de nada:
+
 ```bash
-cd awspectrum-safe-space
+aws login --remote --region us-east-1
+aws sts get-caller-identity
 ```
 
-Comprueba AWS CloudShell, `us-east-1`, permisos para SAM, Bedrock, DynamoDB, S3, CloudWatch y
-Amazon Location. No desactives Block Public Access de la cuenta desde el workshop; `preflight.sh`
+Comprueba `us-east-1` y permisos para SAM, Bedrock, DynamoDB, S3, CloudWatch y Amazon
+Location. No desactives Block Public Access de la cuenta desde el workshop; `preflight.sh`
 solo informa si la configuración de la cuenta impediría el sitio de demostración.
+
+**Plan B:** AWS CloudShell sigue funcionando y no necesita `aws login`; ahí sí hay que clonar
+el repo. Conviene que quien facilita lo tenga ensayado, porque será el camino de quien se
+quede sin cuota de Codespaces.
 
 ## Paso 1 · Preflight
 
@@ -170,6 +185,15 @@ ID del recurso. No preguntar “¿todo bien?”: pedir una evidencia concreta.
 Antes de confirmar, leer qué se va a borrar. Después comprobar que la stack no existe. En una cuenta
 compartida o en la demo de organizadores, detenerse y pedir autorización antes de ejecutar cleanup.
 
+Cerrar después la sesión y el entorno:
+
+```bash
+aws logout
+```
+
+Recordar en voz alta que hay que **detener o eliminar el Codespace**: uno encendido sigue
+consumiendo cuota de horas de quien lo creó.
+
 ## Estado de la demo desplegada
 
 La stack de referencia puede contener el prototipo anterior. No mezclar sus 18 registros con el
@@ -184,7 +208,12 @@ contrato nuevo. Para una migración controlada:
 ## Gates que siguen abiertos
 
 - ensayo desde una cuenta AWS recién creada;
-- acceso a AWS y permisos de GitHub por equipo;
-- operación de forks/repos y PRs;
+- **remedir los tiempos de máquina en Codespaces**, incluido el arranque en frío del Dev
+  Container en la máquina de 2 núcleos;
+- **probar `aws login --remote` de punta a punta** con una cuenta real antes del evento;
+- decidir qué se hace con quien llegue con **IAM Identity Center**: ahí el comando es
+  `aws sso login`, no `aws login`;
+- comprobar que las participantes tienen **cuota de Codespaces** disponible;
+- acceso a AWS por equipo;
 - revisión de la guía con una persona que no conozca el repo;
 - validación periódica de fuentes y horarios del seed.
