@@ -5,9 +5,77 @@ sidebar:
   order: 2
 ---
 
-import Note from "../../../components/Note.astro";
+Cada módulo repite el ciclo **predecir → ejecutar → observar → explicar →
+modificar**. No buscamos memorizar botones: buscamos poder contar la historia
+de una petición.
 
-<Note title="Pendiente de redacción">
-  Aquí vive el recorrido completo: infraestructura, datos, API, integración y
-  Demo Day.
-</Note>
+## 1. ¿Qué problema representa Safe Space?
+
+Identifica las cuatro clases de recurso del track y separa dos conceptos:
+
+- una fuente directa hace que una ficha pueda estar `approved`;
+- una señal o propuesta sin revisión no debe presentarse como confiable.
+
+## 2. ¿Cómo crea AWS lo que declaramos?
+
+Lee `template.yaml`, ejecuta `sam build` y `sam deploy`. Comprueba en
+CloudFormation que aparecen la tabla, las Lambdas, el API, el bucket y la API
+key. La infraestructura sigue siendo la misma arquitectura serverless del
+evento; cambia el significado de los datos.
+
+## 3. ¿Qué recuerda DynamoDB?
+
+Ejecuta `python3 scripts/seed.py` y abre la tabla. Busca estos campos:
+`category`, `services`, `contact`, `provenance` y `publicationStatus`.
+
+Observa que un recurso como una línea de atención puede no tener coordenadas.
+Después compara una ficha con pin y una ficha `contact_only`.
+
+## 4. ¿Qué protege la API?
+
+Prueba `GET /resources` y un `POST /resources`. La API valida categorías,
+servicios, señales, canales y coordenadas. Una propuesta válida devuelve `202`
+con estado `pending`; no aparece en el listado público.
+
+Una propuesta de `shelter_referral` con dirección o coordenadas debe devolver
+`400`. Esa validación vive en Lambda, no solo en el formulario.
+
+## 5. ¿Qué interpreta Bedrock?
+
+Busca frases sobre apoyo psicológico, asesoría legal, personas trans, líneas y
+refugios. Bedrock devuelve criterios estructurados. Luego rompe el modelo de
+forma controlada y comprueba que el fallback mantiene `HTTP 200`.
+
+## 6. ¿Qué cambia el equipo?
+
+El reto único es añadir o corregir una ficha de contacto sin ubicación pública.
+El equipo debe:
+
+1. incluir una fuente directa;
+2. dejar `latitude` y `longitude` fuera;
+3. ejecutar la validación del seed;
+4. comprobar que la ficha aparece en el directorio, pero no como pin;
+5. explicar la decisión en el README y el pitch.
+
+## 7. ¿Cómo sabemos qué ocurrió?
+
+Relaciona una búsqueda y una propuesta con los log groups:
+
+```text
+/aws/lambda/safe-space-places
+/aws/lambda/safe-space-search
+```
+
+Busca `source`, `criteria`, `routeKey` y el identificador del recurso. La
+observabilidad debe mostrar qué camino tomó la petición.
+
+## 8. ¿Qué entregamos?
+
+El pitch de tres minutos cuenta una historia: necesidad, recurso encontrado,
+decisión de procedencia/privacidad, recorrido AWS y cambio del equipo. No basta
+con enumerar servicios.
+
+## 9. ¿Qué significa terminar?
+
+Ejecuta `./scripts/cleanup.sh` y comprueba que la stack desapareció. El ciclo de
+vida y el costo también son parte del trabajo cloud.

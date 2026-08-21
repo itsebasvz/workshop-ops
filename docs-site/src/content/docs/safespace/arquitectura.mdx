@@ -6,16 +6,44 @@ sidebar:
 ---
 
 import Note from "../../../components/Note.astro";
+import ArchDiagram from "../../../components/ArchDiagram.astro";
 
-Cuatro servicios, cada uno con un trabajo claro.
+## ¿Dónde vive cada parte del directorio?
 
-| Servicio | Su trabajo |
+Todo arranca en el navegador. Desde ahí salen cuatro caminos, y cada uno termina
+en un servicio distinto.
+
+<ArchDiagram />
+
+| Servicio | Pregunta que responde |
 | --- | --- |
-| **Amazon S3** | Sirve la interfaz web |
-| **API Gateway** | Expone la API pública |
-| **AWS Lambda** | Ejecuta la lógica, sin servidores que administrar |
-| **Amazon DynamoDB** | Guarda los lugares y sus señales |
+| **S3** | ¿Dónde vive la interfaz que abre la persona? |
+| **Amazon Location** | ¿Qué recursos tienen una ubicación pública que podemos dibujar? |
+| **API Gateway** | ¿Cuál es la puerta HTTP? |
+| **Lambda** | ¿Qué validación no debe confiar en el navegador? |
+| **DynamoDB** | ¿Qué recursos aprobados recuerda el sistema y cuáles siguen pendientes? |
+| **Bedrock** | ¿Cómo traducimos una frase a criterios permitidos sin inventar recursos? |
 
-<Note title="Pendiente de redacción">
-  El diagrama y la explicación módulo a módulo llegan en la siguiente fase.
+## El camino de una petición
+
+1. La interfaz solicita `GET /resources`.
+2. Lambda hace un `Scan` pequeño y devuelve solo items con
+   `publicationStatus: "approved"`.
+3. El navegador muestra todas las fichas y crea marcadores únicamente cuando
+   existen `latitude` y `longitude`.
+4. En una búsqueda, `POST /search` devuelve `{category, services, signals}`.
+5. El navegador aplica esos criterios sobre los recursos que ya recibió.
+
+<Note title="La IA no es el juez">
+  Bedrock no consulta DynamoDB, no escoge organizaciones y no afirma que un
+  recurso sea seguro. La allowlist de la plantilla y el código del frontend
+  conservan el control. Si Bedrock falla, `source` cambia a `fallback` y la
+  aplicación continúa con palabras clave.
 </Note>
+
+## ¿Por qué no todos los recursos tienen pin?
+
+El contrato permite una ficha de contacto sin ubicación. Esto representa líneas,
+redes de canalización y refugios protegidos sin forzar una coordenada falsa o
+peligrosa. La ausencia de pin es una decisión de privacidad, no un error de
+datos.

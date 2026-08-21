@@ -26,7 +26,7 @@ export default defineConfig({
       tagline: EVENT.tagline,
       description:
         "Guía del track SafeSpace Network del AWSpectrum Impact Lab: construye y " +
-        "despliega una plataforma de recursos seguros para la comunidad LGBTQ+ sobre AWS.",
+        "despliega un directorio de recursos con procedencia visible para la comunidad LGBTQ+ sobre AWS.",
       defaultLocale: "root",
       locales: {
         root: { label: "Español", lang: "es-MX" },

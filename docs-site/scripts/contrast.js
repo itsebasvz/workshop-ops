@@ -30,6 +30,9 @@ const TARGETS = [
   [".arch__note", "Nota del diagrama"],
   [".flow__service", "Servicio en el flujo"],
   [".flow__what", "Descripción en el flujo"],
+  [".path__label", "Nombre del camino"],
+  [".chain__service", "Servicio en el camino"],
+  [".chain__what", "Descripción en el camino"],
   [".flow__role", "Rol en el flujo"],
   [".flow__index", "Número del flujo"],
   [".phase__label", "Nombre de bloque"],
@@ -89,6 +92,11 @@ const script = (targets) => {
   });
 };
 
+/* El origen es configurable para poder medir el build servido con `preview`,
+   no solo el servidor de desarrollo:  BASE=http://localhost:4399 pnpm contrast */
+const BASE = process.env.BASE ?? "http://localhost:4321";
+const PATHS = ["/", "/empezar/requisitos", "/empezar/bienvenida", "/safespace/arquitectura"];
+
 (async () => {
   const browser = await chromium.launch();
   let failures = 0;
@@ -98,8 +106,8 @@ const script = (targets) => {
     const page = await ctx.newPage();
     const rows = [];
 
-    for (const url of ["http://localhost:4321/", "http://localhost:4321/empezar/requisitos"]) {
-      await page.goto(url, { waitUntil: "networkidle" });
+    for (const path of PATHS) {
+      await page.goto(BASE + path, { waitUntil: "networkidle" });
       await page.evaluate((t) => (document.documentElement.dataset.theme = t), theme);
       await page.waitForTimeout(250);
       for (const r of await page.evaluate(script, TARGETS)) {

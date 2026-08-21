@@ -35,7 +35,7 @@ export const EVENT = {
   /** Lo que cada participante se lleva a casa. */
   deliverables: [
     "Un MVP funcional y desplegado en AWS",
-    "Un repositorio con tu historial de commits y pull requests",
+    "Un repositorio con tu historial de commits y un cambio revisado por el equipo",
     "Un README profesional del proyecto",
     "Un diagrama de arquitectura",
     "Un pitch de 3 minutos reutilizable en entrevistas",
@@ -50,7 +50,7 @@ export const EVENT = {
 
 /** Roles dentro de cada equipo. El orden es el que se muestra. */
 export const ROLES = [
-  { id: "frontend", label: "Frontend", hint: "Interfaz, mapa y experiencia de uso" },
+  { id: "frontend", label: "Frontend", hint: "Directorio, mapa y experiencia de uso" },
   { id: "backend", label: "Backend", hint: "Funciones Lambda y lógica de la API" },
   { id: "cloud", label: "Cloud", hint: "Infraestructura como código y despliegue" },
   { id: "data", label: "Base de datos", hint: "Modelo de datos y calidad de la información" },
@@ -89,16 +89,16 @@ export const PHASES = [
     label: "Construcción",
     minutes: 80,
     detail:
-      "Infraestructura con SAM, el mapa, los datos y las funciones Lambda. " +
-      "Aquí cada rol trabaja en su parte y abre su rama.",
+      "Infraestructura con SAM, el directorio, el mapa opcional y las funciones Lambda. " +
+      "Aquí cada rol trabaja en su parte y documenta su cambio.",
   },
   {
     id: "integracion",
     label: "IA e integración",
     minutes: 45,
     detail:
-      "Búsqueda en lenguaje natural con Bedrock, pull requests, code review " +
-      "y todo junto funcionando.",
+      "Búsqueda en lenguaje natural con Bedrock, revisión de código e integración. " +
+      "Si el acceso está preparado, también se abre un pull request.",
   },
   {
     id: "pitch",

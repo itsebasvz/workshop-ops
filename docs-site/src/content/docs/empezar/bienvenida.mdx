@@ -8,33 +8,55 @@ sidebar:
 import Note from "../../../components/Note.astro";
 import Step from "../../../components/Step.astro";
 
-Vas a construir y desplegar una plataforma real sobre AWS, en equipo, en tres horas.
+## ¿Qué vamos a construir?
 
-:::note[Esta página es una plantilla]
-El contenido pedagógico se redacta en la siguiente fase. Lo que ya está listo es
-la plataforma: navegación, buscador, tema claro y oscuro, y los componentes que
-usarán todas las guías.
-:::
+Vas a desplegar una aplicación real sobre AWS que ayuda a encontrar recursos
+inclusivos en Ciudad de México: organizaciones, apoyo psicológico y legal,
+centros comunitarios y canales de derivación.
 
-## Cómo está organizado
+## 🎯 Al terminar podrás…
+
+- seguir una petición desde el navegador hasta DynamoDB o Bedrock;
+- explicar por qué algunos recursos tienen pin y otros solo contacto;
+- distinguir una fuente directa de una propuesta pendiente;
+- modificar un recurso, buscarlo en lenguaje natural y explicar el fallback de IA;
+- contar una decisión de privacidad: un refugio puede necesitar existir en el
+  directorio sin revelar su dirección.
+
+## El recorrido
 
 <div class="grid">
   <Step n="1" title="Antes de empezar">
-    Cuenta de AWS, cuenta de GitHub y el repositorio clonado. Se hace una vez y
-    sirve para todo el taller.
+    Cuenta de AWS, cuenta de GitHub y el repositorio clonado. Se hace una vez.
   </Step>
-  <Step n="2" title="Tu track">
-    La guía técnica del track que elijas, dividida en módulos cortos.
+  <Step n="2" title="Construcción">
+    SAM despliega la infraestructura; después cargamos recursos aprobados y
+    observamos el directorio y el mapa.
   </Step>
-  <Step n="3" title="Demo Day">
-    Integración, despliegue y un pitch de tres minutos.
+  <Step n="3" title="Interpretación">
+    Bedrock convierte una necesidad en categoría, servicios y señales. El
+    navegador filtra; el modelo no elige recursos.
+  </Step>
+  <Step n="4" title="Reto y pitch">
+    Añades una ficha de contacto sin coordenadas, la revisas con tu equipo y
+    cierras con un pitch de tres minutos.
   </Step>
 </div>
 
-## Una nota sobre el tema
+## 🧩 La pregunta del track
+
+> ¿Cómo construimos un directorio útil sin convertir una dirección o una señal
+> comunitaria en una falsa promesa de seguridad?
 
 <Note kind="community" title="Esto va de personas">
-  SafeSpace Network guarda información sobre dónde alguien puede sentirse
-  seguro. Un dato sin procedencia no es un dato: es un rumor con coordenadas.
-  A lo largo del taller vamos a insistir en esto.
+  Un dato sin procedencia no es un dato: es un rumor con coordenadas. Safe Space
+  muestra la fuente y la fecha de revisión. Además, una ubicación no siempre
+  debe guardarse: en el caso de un refugio, proteger la dirección es parte del
+  producto.
 </Note>
+
+## Una nota sobre el alcance
+
+El MVP está curado para CDMX. “Aprobado” significa que la ficha tiene una fuente
+directa y una fecha de revisión; no significa que el servicio esté disponible,
+que sea universalmente seguro o que el catálogo sea exhaustivo.

@@ -1,0 +1,73 @@
+---
+/**
+ * La arquitectura de SafeSpace Network como caminos, no como grafo.
+ *
+ * Un diagrama de cajas y flechas es un grafo con ramificaciones, y en el
+ * navegador eso obliga a dibujar líneas: SVG generado en build, que no cambia
+ * con el tema, o una librería de cliente. Aquí la ramificación entera sale del
+ * navegador, así que se puede contar como cuatro caminos rectos. Un camino
+ * recto es una lista ordenada, se lee igual en 390 px que en 1440, funciona en
+ * lector de pantalla y hereda los dos temas sin trabajo extra.
+ *
+ * `Flow.astro` cuenta lo mismo para la portada, pero con un solo camino y el
+ * rol de equipo. Este vive en la guía técnica y detalla las dos Lambdas.
+ */
+const PATHS = [
+  {
+    id: "interfaz",
+    label: "La interfaz",
+    nodes: [
+      { service: "Navegador", what: "Abre la página" },
+      { service: "S3", what: "Sirve el HTML, el CSS y el JS" },
+    ],
+  },
+  {
+    id: "mapa",
+    label: "El mapa",
+    nodes: [
+      { service: "Navegador", what: "Pide el estilo del mapa" },
+      { service: "Amazon Location", what: "Solo dibuja ubicaciones públicas" },
+    ],
+  },
+  {
+    id: "datos",
+    label: "Los datos",
+    nodes: [
+      { service: "Navegador", what: "GET /resources" },
+      { service: "API Gateway", what: "La puerta HTTP" },
+      { service: "Lambda places", what: "Valida y filtra por estado" },
+      { service: "DynamoDB", what: "Guarda approved y pending" },
+    ],
+  },
+  {
+    id: "busqueda",
+    label: "La búsqueda",
+    nodes: [
+      { service: "Navegador", what: "POST /search" },
+      { service: "API Gateway", what: "La misma puerta HTTP" },
+      { service: "Lambda search", what: "Recorta a la allowlist" },
+      { service: "Bedrock", what: "Devuelve criterios, no recursos" },
+    ],
+  },
+];
+---
+
+<div class="paths not-content">
+  {
+    PATHS.map((path) => (
+      <section class="path" aria-labelledby={`path-${path.id}`}>
+        <h3 class="path__label" id={`path-${path.id}`}>
+          {path.label}
+        </h3>
+        <ol class="chain">
+          {path.nodes.map((node) => (
+            <li class="chain__node">
+              <span class="chain__service">{node.service}</span>
+              <span class="chain__what">{node.what}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))
+  }
+</div>
