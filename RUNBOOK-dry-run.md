@@ -7,7 +7,8 @@ de ocio ni una certificación de seguridad.
 - Repo: `awspectrum-safe-space/`
 - Región: `us-east-1`
 - Stack: `safe-space`
-- Cuenta de referencia del ensayo: `180670196186`
+- Cuenta de referencia del ensayo: la de organización (el ID no se publica aquí; sale de
+  `aws sts get-caller-identity`)
 
 ## Objetivo pedagógico
 
